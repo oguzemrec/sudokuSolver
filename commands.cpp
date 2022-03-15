@@ -2,53 +2,124 @@
 #include "qdebug.h"
 
 
-CellValueChanged::CellValueChanged(sudokuCellWidget * w_, int oldNumber_, int newNumber_, QUndoCommand *parent) :
+ChangeCellValue::ChangeCellValue(cell_ptr c_, widget_ptr w_, int oldValue_, int newValue_, QUndoCommand *parent) :
   QUndoCommand(parent),
+  c(c_),
   w(w_),
-  oldNumber(oldNumber_),
-  newNumber(newNumber_)
+  oldValue(oldValue_),
+  newValue(newValue_)
 {
 }
 
-void CellValueChanged::redo()
+void ChangeCellValue::redo()
 {
-  qDebug() << "redo";
-
-  if (newNumber != 0)
-    w->enterNumber(newNumber);
+  if (newValue != 0)
+    c->setCellValue(newValue);
   else
-    w->clearCell();
+    c->setDefault();
 
-  setText(QObject::tr("Change Cell %1's Value:%2").arg(w->getCellNo()).arg(w->getCellValue()));
+  w->updateCellWidget();
 }
 
-void CellValueChanged::undo()
+void ChangeCellValue::undo()
 {
-  qDebug() << "undo";
-
-  if (oldNumber != 0)
-    w->enterNumber(oldNumber);
+  if (oldValue != 0)
+    c->setCellValue(newValue);
   else
-    w->clearCell();
+    c->setDefault();
+
+  w->updateCellWidget();
 }
 
-
-EraseCell::EraseCell(sudokuCellWidget * w_, int oldNumber_, QUndoCommand *parent) :
+AddClueValue::AddClueValue(cell_ptr c_, widget_ptr w_, int clueValue_, QUndoCommand *parent) :
   QUndoCommand(parent),
+  c(c_),
   w(w_),
-  oldNumber(oldNumber_)
+  clueValue(clueValue_)
+{
+}
+
+void AddClueValue::redo()
+{
+  c->setCellClue(clueValue);
+  w->updateCellWidget();
+}
+
+void AddClueValue::undo()
+{
+  c->removeCellClue();
+  w->updateCellWidget();
+}
+
+RemoveCandidate::RemoveCandidate(cell_ptr c_, widget_ptr w_, int candidate_, QUndoCommand *parent) :
+  QUndoCommand(parent),
+  c(c_),
+  w(w_),
+  candidate(candidate_)
+{
+}
+
+void RemoveCandidate::redo()
+{
+  c->removeCandidate(candidate);
+  w->updateCellWidget();
+}
+
+void RemoveCandidate::undo()
+{
+  c->addCandidate(candidate);
+  w->updateCellWidget();
+}
+
+
+ToggleCandidate::ToggleCandidate(cell_ptr c_, widget_ptr w_, int candidate_, QUndoCommand *parent) :
+  QUndoCommand(parent),
+  c(c_),
+  w(w_),
+  candidate(candidate_)
+
+{
+}
+
+void ToggleCandidate::redo()
+{
+  auto res = c->toggleCandidate(candidate);
+
+  if (res == Cell::ToggleCandidateSts::ADDED)
+    setText(QObject::tr("Added Note, Cell :%1, Value:%2").arg(w->getCellNo()).arg(candidate));
+  if (res == Cell::ToggleCandidateSts::REMOVED)
+    setText(QObject::tr("Removed Note, Cell :%1, Value:%2").arg(w->getCellNo()).arg(candidate));
+
+  w->updateCellWidget();
+}
+
+void ToggleCandidate::undo()
+{
+  c->toggleCandidate(candidate);
+  w->updateCellWidget();
+}
+
+
+EraseCell::EraseCell(cell_ptr c_, widget_ptr w_, int oldValue_, QUndoCommand *parent) :
+  QUndoCommand(parent),
+  c(c_),
+  w(w_),
+  oldValue(oldValue_)
 {
 }
 
 void EraseCell::redo()
 {
-  w->clearCell();
-
-  setText(QObject::tr("Erase Cell:%1").arg(w->getCellNo()));
+  c->setDefault();
+  c->addCandidate(oldValue);
+  w->updateCellWidget();
 }
 
 void EraseCell::undo()
 {
-  if (oldNumber != 0)
-    w->enterNumber(oldNumber);
+  if (oldValue == 0)
+    return;
+
+  c->setCellClue(oldValue);
+  w->updateCellWidget();
 }

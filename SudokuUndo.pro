@@ -9,17 +9,25 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    cell.cpp \
     cellWidget.cpp \
     commands.cpp \
+    group.cpp \
     keyNumber.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    sudoku.cpp \
+    sudokuSolver.cpp
 
 HEADERS += \
+    cell.h \
     cellWidget.h \
     commands.h \
+    group.h \
     keyNumber.h \
-    mainwindow.h
+    mainwindow.h \
+    sudoku.h \
+    sudokuSolver.h
 
 FORMS += \
     mainwindow.ui

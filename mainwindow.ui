@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>898</width>
-    <height>628</height>
+    <width>757</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,18 +21,37 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>30</y>
+      <y>40</y>
       <width>450</width>
       <height>450</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayoutSudoku"/>
+    <layout class="QGridLayout" name="gridLayoutSudoku">
+     <property name="leftMargin">
+      <number>9</number>
+     </property>
+     <property name="topMargin">
+      <number>9</number>
+     </property>
+     <property name="rightMargin">
+      <number>9</number>
+     </property>
+     <property name="bottomMargin">
+      <number>9</number>
+     </property>
+     <property name="horizontalSpacing">
+      <number>6</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>0</number>
+     </property>
+    </layout>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>540</y>
+      <y>530</y>
       <width>451</width>
       <height>41</height>
      </rect>
@@ -49,7 +68,7 @@
       <x>20</x>
       <y>490</y>
       <width>431</width>
-      <height>41</height>
+      <height>40</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="layoutTool">
@@ -98,7 +117,7 @@
       <x>470</x>
       <y>20</y>
       <width>258</width>
-      <height>561</height>
+      <height>551</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -114,13 +133,62 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>20</y>
+      <width>371</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QRadioButton" name="radioButtonClueEntering">
+       <property name="text">
+        <string>Clue Mode</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelClueNumber">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButtonNoteMode">
+       <property name="text">
+        <string>Note Mode</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButtonSolvingMode">
+       <property name="text">
+        <string>Solving Mode</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>898</width>
+     <width>757</width>
      <height>22</height>
     </rect>
    </property>
