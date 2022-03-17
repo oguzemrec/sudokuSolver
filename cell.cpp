@@ -67,13 +67,13 @@ int Cell::getCellValue() const
 void Cell::setCellValue(int value)
 {
   cellValue = value;
-  solved = true;
+  solvedFlag = true;
 }
 
 void Cell::setCellClue(int value)
 {
   cellValue = value;
-  clueCell = true;
+  clueFlag = true;
 }
 
 void Cell::removeCellClue()
@@ -133,18 +133,18 @@ QSet<int> Cell::getCandidates()
 void Cell::setDefault()
 {
   cellValue = 0;
-  solved = false;
-  clueCell = false;
+  solvedFlag = false;
+  clueFlag = false;
 }
 
 bool Cell::getSolvedFlag() const
 {
-  return solved;
+  return solvedFlag;
 }
 
 bool Cell::getClueFlag() const
 {
-  return clueCell;
+  return clueFlag;
 }
 
 group_ptr Cell::getOwnBox() const

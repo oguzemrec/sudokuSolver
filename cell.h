@@ -92,8 +92,8 @@ group_ptr ownRow;
 group_ptr ownColumn;
 group_ptr ownBox;
 
-bool solved = false;
-bool clueCell = false;
+bool solvedFlag = false;
+bool clueFlag = false;
 };
 
 #endif // CELL_H

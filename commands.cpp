@@ -2,7 +2,7 @@
 #include "qdebug.h"
 
 
-ChangeCellValue::ChangeCellValue(cell_ptr c_, widget_ptr w_, int oldValue_, int newValue_, QUndoCommand *parent) :
+ChangeCellValue::ChangeCellValue(cellWeakPtr c_, widgetWeakPtr w_, int oldValue_, int newValue_, QUndoCommand *parent) :
   QUndoCommand(parent),
   c(c_),
   w(w_),
@@ -13,25 +13,41 @@ ChangeCellValue::ChangeCellValue(cell_ptr c_, widget_ptr w_, int oldValue_, int 
 
 void ChangeCellValue::redo()
 {
-  if (newValue != 0)
-    c->setCellValue(newValue);
-  else
-    c->setDefault();
+  if (!c)
+    return;
+  if (!w)
+    return;
 
-  w->updateCellWidget();
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  if (newValue != 0)
+    cellSharedPtr->setCellValue(newValue);
+  else
+    cellSharedPtr->setDefault();
+
+  widgetSharedPtr->updateCellWidget();
 }
 
 void ChangeCellValue::undo()
 {
-  if (oldValue != 0)
-    c->setCellValue(newValue);
-  else
-    c->setDefault();
+  if (!c)
+    return;
+  if (!w)
+    return;
 
-  w->updateCellWidget();
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  if (oldValue != 0)
+    cellSharedPtr->setCellValue(newValue);
+  else
+    cellSharedPtr->setDefault();
+
+  widgetSharedPtr->updateCellWidget();
 }
 
-AddClueValue::AddClueValue(cell_ptr c_, widget_ptr w_, int clueValue_, QUndoCommand *parent) :
+AddClueValue::AddClueValue(cellWeakPtr c_, widgetWeakPtr w_, int clueValue_, QUndoCommand *parent) :
   QUndoCommand(parent),
   c(c_),
   w(w_),
@@ -41,17 +57,33 @@ AddClueValue::AddClueValue(cell_ptr c_, widget_ptr w_, int clueValue_, QUndoComm
 
 void AddClueValue::redo()
 {
-  c->setCellClue(clueValue);
-  w->updateCellWidget();
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  cellSharedPtr->setCellClue(clueValue);
+  widgetSharedPtr->updateCellWidget();
 }
 
 void AddClueValue::undo()
 {
-  c->removeCellClue();
-  w->updateCellWidget();
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  cellSharedPtr->removeCellClue();
+  widgetSharedPtr->updateCellWidget();
 }
 
-RemoveCandidate::RemoveCandidate(cell_ptr c_, widget_ptr w_, int candidate_, QUndoCommand *parent) :
+RemoveCandidate::RemoveCandidate(cellWeakPtr c_, widgetWeakPtr w_, int candidate_, QUndoCommand *parent) :
   QUndoCommand(parent),
   c(c_),
   w(w_),
@@ -61,46 +93,77 @@ RemoveCandidate::RemoveCandidate(cell_ptr c_, widget_ptr w_, int candidate_, QUn
 
 void RemoveCandidate::redo()
 {
-  c->removeCandidate(candidate);
-  w->updateCellWidget();
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  cellSharedPtr->removeCandidate(candidate);
+  widgetSharedPtr->updateCellWidget();
 }
 
 void RemoveCandidate::undo()
 {
-  c->addCandidate(candidate);
-  w->updateCellWidget();
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  cellSharedPtr->addCandidate(candidate);
+  widgetSharedPtr->updateCellWidget();
 }
 
 
-ToggleCandidate::ToggleCandidate(cell_ptr c_, widget_ptr w_, int candidate_, QUndoCommand *parent) :
+ToggleCandidate::ToggleCandidate(cellWeakPtr c_, widgetWeakPtr w_, int candidate_, QUndoCommand *parent) :
   QUndoCommand(parent),
   c(c_),
   w(w_),
   candidate(candidate_)
-
 {
 }
 
 void ToggleCandidate::redo()
 {
-  auto res = c->toggleCandidate(candidate);
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  auto res = cellSharedPtr->toggleCandidate(candidate);
 
   if (res == Cell::ToggleCandidateSts::ADDED)
-    setText(QObject::tr("Added Note, Cell :%1, Value:%2").arg(w->getCellNo()).arg(candidate));
+    setText(QObject::tr("Added Note, Cell :%1, Value:%2").arg(widgetSharedPtr->getCellNo()).arg(candidate));
   if (res == Cell::ToggleCandidateSts::REMOVED)
-    setText(QObject::tr("Removed Note, Cell :%1, Value:%2").arg(w->getCellNo()).arg(candidate));
+    setText(QObject::tr("Removed Note, Cell :%1, Value:%2").arg(widgetSharedPtr->getCellNo()).arg(candidate));
 
-  w->updateCellWidget();
+  widgetSharedPtr->updateCellWidget();
 }
 
 void ToggleCandidate::undo()
 {
-  c->toggleCandidate(candidate);
-  w->updateCellWidget();
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  cellSharedPtr->toggleCandidate(candidate);
+  widgetSharedPtr->updateCellWidget();
 }
 
 
-EraseCell::EraseCell(cell_ptr c_, widget_ptr w_, int oldValue_, QUndoCommand *parent) :
+EraseCell::EraseCell(cellWeakPtr c_, widgetWeakPtr w_, int oldValue_, QUndoCommand *parent) :
   QUndoCommand(parent),
   c(c_),
   w(w_),
@@ -110,16 +173,32 @@ EraseCell::EraseCell(cell_ptr c_, widget_ptr w_, int oldValue_, QUndoCommand *pa
 
 void EraseCell::redo()
 {
-  c->setDefault();
-  c->addCandidate(oldValue);
-  w->updateCellWidget();
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  cellSharedPtr->setDefault();
+  cellSharedPtr->addCandidate(oldValue);
+  widgetSharedPtr->updateCellWidget();
 }
 
 void EraseCell::undo()
 {
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
   if (oldValue == 0)
     return;
 
-  c->setCellClue(oldValue);
-  w->updateCellWidget();
+  cellSharedPtr->setCellClue(oldValue);
+  widgetSharedPtr->updateCellWidget();
 }

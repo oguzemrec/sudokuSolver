@@ -114,28 +114,6 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>20</y>
-      <width>258</width>
-      <height>551</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Command List</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QUndoView" name="undoView"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
       <x>30</x>
       <y>20</y>
       <width>371</width>
@@ -158,6 +136,9 @@
        <property name="text">
         <string>0</string>
        </property>
+       <property name="buddy">
+        <cstring>radioButtonNoteMode</cstring>
+       </property>
       </widget>
      </item>
      <item>
@@ -179,6 +160,42 @@
         <bool>false</bool>
        </property>
       </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>471</x>
+      <y>40</y>
+      <width>258</width>
+      <height>531</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Command List</string>
+         </property>
+         <property name="buddy">
+          <cstring>pushButtonClearUndoView</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonClearUndoView">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QUndoView" name="undoView"/>
      </item>
     </layout>
    </widget>

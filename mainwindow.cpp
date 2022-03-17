@@ -42,11 +42,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
           connect(edit.get(), &sudokuCellWidget::cellSelected, [ = ](int cellNo)
       {
+        auto cell = sudoku->getCell(cellNo);
+        if (cell->getClueFlag() == true || cell->getSolvedFlag() == true)
+          this->setHighLight(cell->getCellValue());
+        else
+          this->resetHighLight();
+
         if (selectedCell == -1)
           selectedCell = cellNo;
         else
         {
-          gridCells[selectedCell - 1]->setUnSelect();
+          gridCells[selectedCell - 1]->setUnselect();
           selectedCell = cellNo;
         }
       });
@@ -77,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow()
 {
-  undoStack->clear();
+  //undoStack->clear();
   delete ui;
 }
 
@@ -107,8 +113,6 @@ void MainWindow::keyClicked(int number)
             undoStack->push(new RemoveCandidate(sudoku->getCell(c), gridCells[c - 1], number));
 
           undoStack->endMacro();
-
-          ui->labelClueNumber->setText(QString::number(++clueNumbers));
         }
       break;
     }
@@ -139,6 +143,8 @@ void MainWindow::keyClicked(int number)
     default:
       break;
     }
+  sudoku->scanGrid();
+  ui->labelClueNumber->setText(QString::number(sudoku->getClueCellsCount()));
 }
 
 void MainWindow::on_buttonErase_clicked()
@@ -164,10 +170,6 @@ void MainWindow::on_buttonErase_clicked()
       undoStack->push(new EraseCell(cell, w, cell->getCellValue()));
       undoStack->endMacro();
 
-      if (clueNumbers != 0)
-        clueNumbers--;
-      ui->labelClueNumber->setText(QString::number(clueNumbers));
-
       break;
     }
 
@@ -190,20 +192,11 @@ void MainWindow::on_buttonErase_clicked()
     default:
       break;
     }
+
+  sudoku->scanGrid();
+  ui->labelClueNumber->setText(QString::number(sudoku->getClueCellsCount()));
 }
 
-//void MainWindow::on_pushButton_clicked()
-//{
-//  auto w = gridCells[0];
-//  auto w2 = gridCells[1];
-
-//  undoStack->beginMacro(tr("Test Macro"));
-
-//  undoStack->push(new CellValueChanged(w, w->getCellValue(), 1));
-//  undoStack->push(new CellValueChanged(w2, w2->getCellValue(), 2));
-
-//  undoStack->endMacro();
-//}
 
 void MainWindow::on_actionlk_triggered()
 {
@@ -212,9 +205,14 @@ void MainWindow::on_actionlk_triggered()
 
 void MainWindow::on_radioButtonClueEntering_clicked(bool checked)
 {
+  sudoku->scanGrid();
+  auto clueCount = sudoku->getClueCellsCount();
+
+  ui->labelClueNumber->setText(QString::number(clueCount));
+
   if (false == checked)         //checking clue number
     {
-      if (clueNumbers < 17)
+      if (clueCount < 17)
         ui->radioButtonClueEntering->setChecked(true);
     }
   if (true == checked)          //checking clue number
@@ -225,9 +223,14 @@ void MainWindow::on_radioButtonClueEntering_clicked(bool checked)
 
 void MainWindow::on_radioButtonNoteMode_clicked(bool checked)
 {
+  sudoku->scanGrid();
+  auto clueCount = sudoku->getClueCellsCount();
+
+  ui->labelClueNumber->setText(QString::number(clueCount));
+
   if (true == checked)          //checking clue number
     {
-      if (clueNumbers < 17)
+      if (clueCount < 17)
         ui->radioButtonClueEntering->setChecked(true);
       else
         gridMode = GridEntryMode::NOTE;
@@ -236,11 +239,53 @@ void MainWindow::on_radioButtonNoteMode_clicked(bool checked)
 
 void MainWindow::on_radioButtonSolvingMode_clicked(bool checked)
 {
+  sudoku->scanGrid();
+  auto clueCount = sudoku->getClueCellsCount();
+
+  ui->labelClueNumber->setText(QString::number(clueCount));
+
   if (true == checked)          //checking clue number
     {
-      if (clueNumbers < 17)
+      if (clueCount < 17)
         ui->radioButtonClueEntering->setChecked(true);
       else
         gridMode = GridEntryMode::SOLVING;
+    }
+}
+
+void MainWindow::on_pushButtonClearUndoView_clicked()
+{
+  undoStack->clear();
+}
+
+void MainWindow::setHighLight(int cellValue)
+{
+  for (auto hc: highLightedWCells)
+    {
+      hc->clearHighLighted();
+      hc->updateCellWidget();
+    }
+
+  auto cCells = sudoku->getEmptyCells();   //only contains candidate cells
+
+  for (auto c: cCells)
+    {
+      auto candidates = c->getCandidates();
+      if (candidates.find(cellValue) != candidates.end())
+        {
+          auto w = gridCells[c->getCellNumber() - 1];
+          w->insertHighLighted(cellValue, Qt::yellow);
+          w->updateCellWidget();
+          highLightedWCells.push_back(w);
+        }
+    }
+}
+
+void MainWindow::resetHighLight()
+{
+  for (auto hc: highLightedWCells)
+    {
+      hc->clearHighLighted();
+      hc->updateCellWidget();
     }
 }

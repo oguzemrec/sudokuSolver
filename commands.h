@@ -5,15 +5,13 @@
 #include "cellWidget.h"
 #include "cell.h"
 
-using cell_ptr = QSharedPointer<Cell>;
-using  widget_ptr = QSharedPointer<sudokuCellWidget>;
-
-
+using cellWeakPtr = QWeakPointer<Cell>;
+using  widgetWeakPtr = QWeakPointer<sudokuCellWidget>;
 
 class ChangeCellValue : public QUndoCommand
 {
 public:
-ChangeCellValue(cell_ptr c, widget_ptr w, int oldNumber, int newNumber,
+ChangeCellValue(cellWeakPtr c, widgetWeakPtr w, int oldNumber, int newNumber,
                 QUndoCommand *parent = nullptr);
 
 private:
@@ -21,8 +19,8 @@ private:
 void redo() override;
 void undo() override;
 
-cell_ptr c;
-widget_ptr w;
+cellWeakPtr c;
+widgetWeakPtr w;
 
 int oldValue = 0;
 int newValue = 0;
@@ -31,7 +29,7 @@ int newValue = 0;
 class AddClueValue : public QUndoCommand
 {
 public:
-AddClueValue(cell_ptr c, widget_ptr w, int candidate,
+AddClueValue(cellWeakPtr c, widgetWeakPtr w, int candidate,
              QUndoCommand *parent = nullptr);
 
 private:
@@ -39,8 +37,8 @@ private:
 void redo() override;
 void undo() override;
 
-cell_ptr c;
-widget_ptr w;
+cellWeakPtr c;
+widgetWeakPtr w;
 
 int clueValue;
 };
@@ -48,7 +46,7 @@ int clueValue;
 class RemoveCandidate : public QUndoCommand
 {
 public:
-RemoveCandidate(cell_ptr c, widget_ptr w, int candidate,
+RemoveCandidate(cellWeakPtr c, widgetWeakPtr w, int candidate,
                 QUndoCommand *parent = nullptr);
 
 private:
@@ -56,8 +54,8 @@ private:
 void redo() override;
 void undo() override;
 
-cell_ptr c;
-widget_ptr w;
+cellWeakPtr c;
+widgetWeakPtr w;
 
 int candidate;
 };
@@ -65,7 +63,7 @@ int candidate;
 class ToggleCandidate : public QUndoCommand
 {
 public:
-ToggleCandidate(cell_ptr c, widget_ptr w, int candidate,
+ToggleCandidate(cellWeakPtr c, widgetWeakPtr w, int candidate,
                 QUndoCommand *parent = nullptr);
 
 private:
@@ -73,8 +71,8 @@ private:
 void redo() override;
 void undo() override;
 
-cell_ptr c;
-widget_ptr w;
+cellWeakPtr c;
+widgetWeakPtr w;
 
 int candidate;
 };
@@ -82,15 +80,15 @@ int candidate;
 class EraseCell : public QUndoCommand
 {
 public:
-EraseCell(cell_ptr c, widget_ptr w, int oldValue, QUndoCommand *parent = nullptr);
+EraseCell(cellWeakPtr c, widgetWeakPtr w, int oldValue, QUndoCommand *parent = nullptr);
 
 private:
 
 void redo() override;
 void undo() override;
 
-cell_ptr c;
-widget_ptr w;
+cellWeakPtr c;
+widgetWeakPtr w;
 
 int oldValue = 0;
 };

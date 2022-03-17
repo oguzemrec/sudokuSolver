@@ -101,3 +101,32 @@ QSharedPointer<Cell>  Sudoku::getCell(int cellNo) const
 {
   return cells[cellNo - 1];
 }
+
+
+
+void Sudoku::scanGrid()
+{
+  emptyCells.clear();
+
+  clueCellCount = 0;
+  solvedCellCount = 0;
+  emptyCellCount = 0;
+
+  for (auto c:cells)
+    {
+      if (c->getClueFlag() == true)
+        clueCellCount++;
+      else if (c->getSolvedFlag() == true)
+        solvedCellCount++;
+      else
+        {
+          emptyCells.push_back(c);
+          emptyCellCount++;
+        }
+    }
+}
+
+QVector<QSharedPointer<Cell> > Sudoku::getEmptyCells() const
+{
+  return emptyCells;
+}

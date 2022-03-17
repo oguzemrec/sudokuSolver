@@ -15,24 +15,20 @@ sudokuCellWidget(QWidget *parent = nullptr, QSharedPointer<Cell> c = nullptr);
 
 void updateCellWidget();
 
-void setUnSelect();
+void setUnselect();
+
 int getCellNo() const;
-
-void enterClue(int num);
-void eraseClue();
-
-
-void enterNumber(int num);
-void clearCell();
 
 
 int getCellValue() const;
 
-bool getLock() const;
-void setLock(bool value);
 
 bool getClueMode() const;
 
+
+void insertHighLighted(int candidate, QColor col);
+void removeHighLighted(int candidate);
+void clearHighLighted();
 signals:
 
 void cellSelected(int cellNo);
@@ -43,12 +39,12 @@ private:
 QString currentText;
 void prepareCandidateStr();
 
-bool lock = false; // for certain values: solutions
-bool clueMode = false; // for initial values
-
 QSharedPointer<Cell> sudokuCell;
 
 QFont candidateFont, solvedFont, clueFont;
+
+QMap<int, QColor> highLightedCandidates;
+QColor candidateColor;
 
 protected:
 void mousePressEvent(QMouseEvent *event) override;
