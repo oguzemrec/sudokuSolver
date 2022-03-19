@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
           QSharedPointer<sudokuCellWidget> edit(new sudokuCellWidget(this, sudoku->getCell(cellNumber)));
 
-          gridCells.insert(cellNumber - 1, edit);
+          gridCells.insert(cellNumber, edit);
 
           connect(edit.get(), &sudokuCellWidget::cellSelected, [ = ](int cellNo)
       {
@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
           selectedCell = cellNo;
         else
         {
-          gridCells[selectedCell - 1]->setUnselect();
+          gridCells[selectedCell ]->setUnselect();
           selectedCell = cellNo;
         }
       });
@@ -92,7 +92,7 @@ void MainWindow::keyClicked(int number)
   if (selectedCell == -1)
     return;
 
-  auto w = gridCells[selectedCell - 1];
+  auto w = gridCells[selectedCell];
   auto cell = sudoku->getCell(selectedCell);
 
   if (cell->getCellValue() == number || cell->getClueFlag() != false || cell->getSolvedFlag() != false)
@@ -110,7 +110,7 @@ void MainWindow::keyClicked(int number)
 
           auto effected = solver.effectedCells(cell, number);
           for (int c: effected)
-            undoStack->push(new RemoveCandidate(sudoku->getCell(c), gridCells[c - 1], number));
+            undoStack->push(new RemoveCandidate(sudoku->getCell(c), gridCells[c ], number));
 
           undoStack->endMacro();
         }
@@ -132,7 +132,7 @@ void MainWindow::keyClicked(int number)
 
           auto effected = solver.effectedCells(cell, number);
           for (int c: effected)
-            undoStack->push(new RemoveCandidate(sudoku->getCell(c), gridCells[c - 1], number));
+            undoStack->push(new RemoveCandidate(sudoku->getCell(c), gridCells[c], number));
 
           undoStack->endMacro();
         }
@@ -152,7 +152,7 @@ void MainWindow::on_buttonErase_clicked()
   if (selectedCell == -1)
     return;
 
-  auto w = gridCells[selectedCell - 1];
+  auto w = gridCells[selectedCell];
   auto cell = sudoku->getCell(selectedCell);
 
   if (w->getCellValue() == 0)
@@ -266,6 +266,8 @@ void MainWindow::setHighLight(int cellValue)
       hc->updateCellWidget();
     }
 
+  highLightedWCells.clear();
+
   auto cCells = sudoku->getEmptyCells();   //only contains candidate cells
 
   for (auto c: cCells)
@@ -273,7 +275,7 @@ void MainWindow::setHighLight(int cellValue)
       auto candidates = c->getCandidates();
       if (candidates.find(cellValue) != candidates.end())
         {
-          auto w = gridCells[c->getCellNumber() - 1];
+          auto w = gridCells[c->getCellNumber()];
           w->insertHighLighted(cellValue, Qt::yellow);
           w->updateCellWidget();
           highLightedWCells.push_back(w);
@@ -288,4 +290,9 @@ void MainWindow::resetHighLight()
       hc->clearHighLighted();
       hc->updateCellWidget();
     }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+  solver.solveSudoku_(sudoku->getCells());
 }

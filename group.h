@@ -15,17 +15,28 @@ class Group
 {
 public:
 
-    Group(){}
+Group()
+{
+}
+
+QSharedPointer<Cell> operator[](int index)
+{
+  return cells[index];
+}
+//void operator=(int index,int val)
+//{
+//    cells[index]->setCellValue(val);
+//}
 
 
-    Group(int no,QVector<QSharedPointer<Cell>> t);
-   void show();
+Group(int no, QVector<QSharedPointer<Cell> > t);
+void show();
 
-   QVector<QSharedPointer<Cell> > getCells() const;
+QVector<QSharedPointer<Cell> > getCells() const;
 
 private:
-   int number=0;
-   QVector<QSharedPointer<Cell>> cells;
+int number = 0;
+QVector<QSharedPointer<Cell> > cells;
 };
 
 #endif // GROUP_H

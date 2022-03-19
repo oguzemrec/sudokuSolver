@@ -17,10 +17,14 @@ class Cell {
 public:
 
 
-Cell(int no) : cellNumber(no)
+Cell(int no = -1) : cellNumber(no)
 {
 }
 
+void operator=(int value)
+{
+  this->setCellValue(value);
+}
 void show()
 {
   cout << "Cell:" << cellNumber << " - " << "Value:" << cellValue << endl;

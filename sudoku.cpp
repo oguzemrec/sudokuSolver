@@ -130,3 +130,13 @@ QVector<QSharedPointer<Cell> > Sudoku::getEmptyCells() const
 {
   return emptyCells;
 }
+
+QVector<QSharedPointer<Group> > Sudoku::getRows() const
+{
+  return Rows;
+}
+
+QVector<QSharedPointer<Cell> > Sudoku::getCells() const
+{
+  return cells;
+}

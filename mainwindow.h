@@ -38,11 +38,13 @@ void on_radioButtonSolvingMode_clicked(bool checked);
 
 void on_pushButtonClearUndoView_clicked();
 
+void on_pushButton_clicked();
+
 private:
 Ui::MainWindow *ui;
 
 int selectedCell = -1;   //1to81
-QMap<int, QSharedPointer<sudokuCellWidget> > gridCells;    //0to80
+QMap<int, QSharedPointer<sudokuCellWidget> > gridCells;    //1to81
 
 QUndoStack *undoStack = nullptr;
 QUndoGroup *undoGroup;

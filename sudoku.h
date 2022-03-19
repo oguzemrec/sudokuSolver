@@ -20,7 +20,7 @@ QSharedPointer<Cell>  getCell(int cellNo) const;
 
 int getClueCellsCount() const
 {
-  return 18;  //clueCellCount;
+  return clueCellCount;
 };
 
 int getSolvedCells() const
@@ -36,6 +36,10 @@ int getEmptyCellCount() const
 void scanGrid();
 
 QVector<QSharedPointer<Cell> > getEmptyCells() const;
+
+QVector<QSharedPointer<Group> > getRows() const;
+
+QVector<QSharedPointer<Cell> > getCells() const;
 
 private:
 QVector<QSharedPointer<Cell> > cells;

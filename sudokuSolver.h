@@ -2,7 +2,7 @@
 #define SUDOKUSOLVER_H
 
 #include <QObject>
-#include "cell.h"
+#include "sudoku.h"
 
 class sudokuSolver : public QObject
 {
@@ -21,9 +21,17 @@ Q_ENUM(CellEntrAttemp);
 explicit sudokuSolver(QObject *parent = nullptr);
 
 CellEntrAttemp isValueProper(QSharedPointer<Cell> cell, int number);
+
 QSet<int> effectedCells(QSharedPointer<Cell> cell, int candidate);
 
+//will return
+void solveSudoku_(const QVector<QSharedPointer<Cell> >  &gridCells);
+
+
 signals:
+
+private:
+Sudoku solutionGrid;
 };
 
 #endif // SUDOKUSOLVER_H
