@@ -3,28 +3,29 @@
 #include <QMouseEvent>
 
 
-sudokuCellWidget::sudokuCellWidget(QWidget *parent, QSharedPointer<Cell> c) :
+sudokuCellWidget::sudokuCellWidget(QWidget *parent, QSharedPointer<Cell> c, QSize size_) :
   QTextEdit(parent),
   sudokuCell(c)
 {
+  float psizeCEfficient = float(float(size_.width()) / 50);
+
   candidateColor = Qt::lightGray;
 
   this->setFontFamily("Arial");
   solvedFont = this->font();
-  solvedFont.setPointSize(22);
+  solvedFont.setPointSize(22 * psizeCEfficient);
   solvedFont.setBold(true);
 
-
   clueFont = this->font();
-  clueFont.setPointSize(22);
+  clueFont.setPointSize(22 * psizeCEfficient);
   clueFont.setBold(true);
 
   candidateFont = this->font();
-  candidateFont.setPointSize(10);
+  candidateFont.setPointSize(9 * psizeCEfficient);
   candidateFont.setItalic(true);
 
-  setMinimumSize(50, 50);
-  setMaximumSize(50, 50);
+  setMinimumSize(size_);
+  setMaximumSize(size_);
 
   setAlignment(Qt::AlignHCenter);
   setAlignment(Qt::AlignVCenter);
@@ -42,9 +43,21 @@ sudokuCellWidget::sudokuCellWidget(QWidget *parent, QSharedPointer<Cell> c) :
 
   updateCellWidget();
 }
+void sudokuCellWidget::setCell(const QSharedPointer<Cell>& c)
+{
+  sudokuCell = c;
+  this->setDisabled(false);
+}
+
 
 void sudokuCellWidget::updateCellWidget()
 {
+  if (sudokuCell == nullptr)
+    {
+      this->setDisabled(true);
+      return;
+    }
+
   if (sudokuCell->getClueFlag() == true)
     {
       currentText.clear();
@@ -79,6 +92,9 @@ void sudokuCellWidget::setUnselect()
 
 int sudokuCellWidget::getCellNo() const
 {
+  if (sudokuCell == nullptr)
+    return -1;
+
   return sudokuCell->getCellNumber();
 }
 
@@ -86,6 +102,9 @@ int sudokuCellWidget::getCellNo() const
 
 int sudokuCellWidget::getCellValue() const
 {
+  if (sudokuCell == nullptr)
+    return -1;
+
   return sudokuCell->getCellValue();
 }
 
@@ -107,6 +126,8 @@ void sudokuCellWidget::clearHighLighted()
 {
   highLightedCandidates.clear();
 }
+
+
 
 void sudokuCellWidget::prepareCandidateStr()
 {
@@ -144,15 +165,21 @@ void sudokuCellWidget::prepareCandidateStr()
     }
 }
 
-
+void sudokuCellWidget::setClickable(bool value)
+{
+  clickable = value;
+}
 
 void sudokuCellWidget::mousePressEvent(QMouseEvent *event)
 {
-  if (event->button() == Qt::LeftButton)
-    {
-      emit cellSelected(sudokuCell->getCellNumber());
-      this->setStyleSheet("background-color: rgb(150, 27, 15);");
-    }
+  if (clickable != false)
+    if (event->button() == Qt::LeftButton)
+      {
+        emit cellSelected(sudokuCell->getCellNumber());
+        this->setStyleSheet("background-color: rgb(150, 27, 15);");
+      }
+
+  QTextEdit::mousePressEvent(event);
 }
 
 

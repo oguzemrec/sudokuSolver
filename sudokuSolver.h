@@ -16,6 +16,7 @@ enum  class CellEntrAttemp {
   EXIST_INBOX= 3,
 };
 
+
 Q_ENUM(CellEntrAttemp);
 
 explicit sudokuSolver(QObject *parent = nullptr);
@@ -27,9 +28,10 @@ QSet<int> effectedCells(QSharedPointer<Cell> cell, int candidate);
 //will return
 void solveSudoku_(const QVector<QSharedPointer<Cell> >  &gridCells);
 
+Sudoku getSolutionGrid() const;
 
 signals:
-
+void solutionEvent(bool solutionRes, int iterationCount);
 private:
 Sudoku solutionGrid;
 };

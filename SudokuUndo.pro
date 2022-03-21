@@ -16,6 +16,7 @@ SOURCES += \
     keyNumber.cpp \
     main.cpp \
     mainwindow.cpp \
+    miniGrid.cpp \
     sudoku.cpp \
     sudokuSolver.cpp
 
@@ -26,6 +27,7 @@ HEADERS += \
     group.h \
     keyNumber.h \
     mainwindow.h \
+    miniGrid.h \
     sudoku.h \
     sudokuSolver.h
 

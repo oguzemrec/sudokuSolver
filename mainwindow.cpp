@@ -3,6 +3,8 @@
 #include "QMessageBox"
 #include "keyNumber.h"
 #include "commands.h"
+#include "miniGrid.h"
+
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -79,6 +81,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       lineH->setLineWidth(3);
       ui->gridLayoutSudoku->addWidget(lineH, (i + 1) * 3, 0, Qt::AlignTop);
     }
+
+
+  stackedWidget = new QStackedWidget(this);
+  ui->verticalLayout_2->addWidget(stackedWidget);
+  connect(ui->pageComboBox, QOverload<int>::of(&QComboBox::activated),
+          stackedWidget, &QStackedWidget::setCurrentIndex);
+
+  solver = new sudokuSolver(this);
+  connect(solver, &sudokuSolver::solutionEvent, this, &MainWindow::solutionEvent);
 }
 
 MainWindow::~MainWindow()
@@ -102,13 +113,13 @@ void MainWindow::keyClicked(int number)
     {
     case GridEntryMode::CLUE:
     {
-      sudokuSolver::CellEntrAttemp res = solver.isValueProper(cell, number);    //search out the other cells are neighbour
+      sudokuSolver::CellEntrAttemp res = solver->isValueProper(cell, number);    //search out the other cells are neighbour
       if (res == sudokuSolver::CellEntrAttemp::NOT_FOUND)       //if the number of cell is proper
         {
           undoStack->beginMacro(QObject::tr("Add Clue, Cell:%1's Value:%2").arg(cell->getCellNumber()).arg(number));
           undoStack->push(new AddClueValue(cell, w, number));
 
-          auto effected = solver.effectedCells(cell, number);
+          auto effected = solver->effectedCells(cell, number);
           for (int c: effected)
             undoStack->push(new RemoveCandidate(sudoku->getCell(c), gridCells[c ], number));
 
@@ -123,14 +134,14 @@ void MainWindow::keyClicked(int number)
 
     case GridEntryMode::SOLVING:
     {
-      sudokuSolver::CellEntrAttemp res = solver.isValueProper(cell, number);    //search out the other cells are neighbour
+      sudokuSolver::CellEntrAttemp res = solver->isValueProper(cell, number);    //search out the other cells are neighbour
 
       if (res == sudokuSolver::CellEntrAttemp::NOT_FOUND)       //if the number of cell is proper
         {
           undoStack->beginMacro(QObject::tr("Change Cell %1's Value:%2").arg(cell->getCellNumber()).arg(number));
           undoStack->push(new ChangeCellValue(cell, w, cell->getCellValue(), number));
 
-          auto effected = solver.effectedCells(cell, number);
+          auto effected = solver->effectedCells(cell, number);
           for (int c: effected)
             undoStack->push(new RemoveCandidate(sudoku->getCell(c), gridCells[c], number));
 
@@ -146,6 +157,8 @@ void MainWindow::keyClicked(int number)
   sudoku->scanGrid();
   ui->labelClueNumber->setText(QString::number(sudoku->getClueCellsCount()));
 }
+
+
 
 void MainWindow::on_buttonErase_clicked()
 {
@@ -292,7 +305,60 @@ void MainWindow::resetHighLight()
     }
 }
 
-void MainWindow::on_pushButton_clicked()
+//void MainWindow::on_pushButton_3_clicked()
+//{
+//  miniGrid *mini = new miniGrid(this);
+//  miniGrid *mini2 = new miniGrid(this);
+//  miniGrid *mini3 = new miniGrid(this);
+
+//  qDebug() << stackedWidget->addWidget(mini);
+//  qDebug() << stackedWidget->addWidget(mini2);
+//  qDebug() << stackedWidget->addWidget(mini3);
+//  mini->insertSudokuGrid(solver->getSolutionGrid());
+//  mini2->insertSudokuGrid(*sudoku.get());
+
+//  mini3->insertCell(sudoku->getCells()[0]);
+//}
+
+void MainWindow::solutionEvent(bool solutionRes, int iterationCount)
 {
-  solver.solveSudoku_(sudoku->getCells());
+  for (auto w: stackedWidgets)
+    {
+      stackedWidget->removeWidget(w);
+      w->deleteLater();
+    }
+  stackedWidgets.clear();
+  ui->pageComboBox->clear();
+
+  if (solutionRes == true)
+    {
+      miniGrid *solutionGrid = new miniGrid(this);
+      stackedWidget->addWidget(solutionGrid);
+      solutionGrid->insertSudokuGrid(solver->getSolutionGrid());
+      ui->pageComboBox->addItem(tr("Solution"));
+      stackedWidgets.push_back(solutionGrid);
+
+      ui->labelStatus->setText(QObject::tr("Solved with %1 iterations").arg(iterationCount));
+    }
+  else
+    ui->labelStatus->setText(QObject::tr("Couldn't be solved with %1 iterations").arg(iterationCount));
+}
+
+void MainWindow::on_buttonSolution_clicked()
+{
+  solver->solveSudoku_(sudoku->getCells());
+}
+
+void MainWindow::on_buttonReset_clicked()
+{
+  undoStack->clear();
+  auto cells = sudoku->getCells();
+
+  for (auto w: gridCells)
+    {
+      cells[w->getCellNo() - 1]->resetCell();
+      w->updateCellWidget();
+    }
+  sudoku->scanGrid();
+  ui->labelClueNumber->setText(QString::number(sudoku->getClueCellsCount()));
 }

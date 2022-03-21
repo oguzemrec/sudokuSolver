@@ -11,30 +11,32 @@ Q_OBJECT
 
 public:
 
-sudokuCellWidget(QWidget *parent = nullptr, QSharedPointer<Cell> c = nullptr);
+sudokuCellWidget(QWidget *parent = nullptr, QSharedPointer<Cell> c = nullptr, QSize size = QSize(50, 50));
 
 void updateCellWidget();
 
 void setUnselect();
 
 int getCellNo() const;
-
-
 int getCellValue() const;
-
-
 bool getClueMode() const;
 
 
 void insertHighLighted(int candidate, QColor col);
 void removeHighLighted(int candidate);
 void clearHighLighted();
+
+void setCell(const QSharedPointer<Cell>&  c);
+void setClickable(bool value);
+
 signals:
 
 void cellSelected(int cellNo);
 
-
 private:
+
+bool clickable = true;
+
 
 QString currentText;
 void prepareCandidateStr();

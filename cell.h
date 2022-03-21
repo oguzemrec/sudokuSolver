@@ -69,7 +69,7 @@ ToggleCandidateSts toggleCandidate(int num);
 QSet<int> getCandidates();
 
 void setDefault();
-
+void resetCell();
 bool getSolvedFlag() const;
 
 bool getClueFlag() const;

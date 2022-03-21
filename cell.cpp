@@ -137,6 +137,14 @@ void Cell::setDefault()
   clueFlag = false;
 }
 
+void Cell::resetCell()
+{
+  cellValue = 0;
+  solvedFlag = false;
+  clueFlag = false;
+  candidates = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+}
+
 bool Cell::getSolvedFlag() const
 {
   return solvedFlag;
