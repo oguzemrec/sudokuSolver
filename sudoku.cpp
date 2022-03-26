@@ -102,13 +102,32 @@ QSharedPointer<Cell>  Sudoku::getCell(int cellNo) const
   return cells[cellNo - 1];
 }
 
+QSet<int> Sudoku::getIntersectCells(int cellNo) const
+{
+  QSet<int> inter;
+  auto box = cells[cellNo - 1]->getOwnBox()->getCells();
+  auto column = cells[cellNo - 1]->getOwnColumn()->getCells();
+  auto row = cells[cellNo - 1]->getOwnRow()->getCells();
+
+  for (auto const& b: box)
+    inter.insert(b->getCellNumber());
+
+  for (auto const& c: column)
+    inter.insert(c->getCellNumber());
+
+  for (auto const& r: row)
+    inter.insert(r->getCellNumber());
+
+  return inter;
+}
+
 
 
 void Sudoku::scanGrid()
 {
   emptyCells.clear();
 
-  clueCellCount = 0;
+  clueCellCount = 18;
   solvedCellCount = 0;
   emptyCellCount = 0;
 

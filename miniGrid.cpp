@@ -62,3 +62,15 @@ void miniGrid::insertCell(const QSharedPointer<Cell> &cell)
   gridCells[cell->getCellNumber()]->setCell(cell);
   gridCells[cell->getCellNumber()]->updateCellWidget();
 }
+
+void miniGrid::insertHighLighted(const int &cellNo, QMap<int, QColor> candidates)
+{
+  QMapIterator<int, QColor> i(candidates);
+
+  while (i.hasNext())
+    {
+      i.next();
+      gridCells[cellNo]->insertHighLighted(i.key(), i.value());
+      gridCells[cellNo]->updateCellWidget();
+    }
+}

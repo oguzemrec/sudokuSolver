@@ -14,6 +14,7 @@ public:
 void insertSudokuGrid(const Sudoku& sudoku);
 void insertCell(const QSharedPointer<Cell>& cell);
 void insertCell(const int& cellNo, const int&value);
+void insertHighLighted(const int &cellNo, QMap<int, QColor> candidates);
 signals:
 private:
 QMap<int, QSharedPointer<sudokuCellWidget> > gridCells;    //1to81

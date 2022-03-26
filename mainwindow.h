@@ -45,6 +45,8 @@ void on_buttonSolution_clicked();
 
 void on_buttonReset_clicked();
 
+void on_buttonXYWing_clicked();
+
 private:
 Ui::MainWindow *ui;
 
@@ -69,6 +71,7 @@ void setHighLight(int cellValue);
 void resetHighLight();
 QVector<QSharedPointer<sudokuCellWidget> > highLightedWCells;
 
+void updateMethodWidget(QString method);
 QStackedWidget *    stackedWidget;
 QVector<QWidget *> stackedWidgets;
 };

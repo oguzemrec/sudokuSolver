@@ -16,7 +16,7 @@ Sudoku();
 
 QVector<QSharedPointer<Group> > getBoxes() const;
 QSharedPointer<Cell>  getCell(int cellNo) const;
-
+QSet<int> getIntersectCells(int cellNo) const;
 
 int getClueCellsCount() const
 {

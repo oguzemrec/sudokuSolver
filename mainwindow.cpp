@@ -270,7 +270,19 @@ void MainWindow::on_pushButtonClearUndoView_clicked()
 {
   undoStack->clear();
 }
+void MainWindow::on_buttonReset_clicked()
+{
+  undoStack->clear();
+  auto cells = sudoku->getCells();
 
+  for (auto w: gridCells)
+    {
+      cells[w->getCellNo() - 1]->resetCell();
+      w->updateCellWidget();
+    }
+  sudoku->scanGrid();
+  ui->labelClueNumber->setText(QString::number(sudoku->getClueCellsCount()));
+}
 void MainWindow::setHighLight(int cellValue)
 {
   for (auto hc: highLightedWCells)
@@ -305,22 +317,7 @@ void MainWindow::resetHighLight()
     }
 }
 
-//void MainWindow::on_pushButton_3_clicked()
-//{
-//  miniGrid *mini = new miniGrid(this);
-//  miniGrid *mini2 = new miniGrid(this);
-//  miniGrid *mini3 = new miniGrid(this);
-
-//  qDebug() << stackedWidget->addWidget(mini);
-//  qDebug() << stackedWidget->addWidget(mini2);
-//  qDebug() << stackedWidget->addWidget(mini3);
-//  mini->insertSudokuGrid(solver->getSolutionGrid());
-//  mini2->insertSudokuGrid(*sudoku.get());
-
-//  mini3->insertCell(sudoku->getCells()[0]);
-//}
-
-void MainWindow::solutionEvent(bool solutionRes, int iterationCount)
+void MainWindow::updateMethodWidget(QString method)
 {
   for (auto w: stackedWidgets)
     {
@@ -329,6 +326,13 @@ void MainWindow::solutionEvent(bool solutionRes, int iterationCount)
     }
   stackedWidgets.clear();
   ui->pageComboBox->clear();
+  ui->labelMethod->setText(method);
+}
+
+
+void MainWindow::solutionEvent(bool solutionRes, int iterationCount)
+{
+  this->updateMethodWidget("Solution");
 
   if (solutionRes == true)
     {
@@ -349,16 +353,49 @@ void MainWindow::on_buttonSolution_clicked()
   solver->solveSudoku_(sudoku->getCells());
 }
 
-void MainWindow::on_buttonReset_clicked()
-{
-  undoStack->clear();
-  auto cells = sudoku->getCells();
 
-  for (auto w: gridCells)
+
+#include "wing.h"
+void MainWindow::on_buttonXYWing_clicked()
+{
+  XYWing wing;
+
+  this->updateMethodWidget("XY-Wing");
+
+  auto vWing = wing.findTechnics(sudoku);
+
+  if (vWing.size() == 0)
     {
-      cells[w->getCellNo() - 1]->resetCell();
-      w->updateCellWidget();
+      ui->labelStatus->setText(QObject::tr("Couldn't be found XY-Wing"));
+      return;
     }
-  sudoku->scanGrid();
-  ui->labelClueNumber->setText(QString::number(sudoku->getClueCellsCount()));
+
+  ui->labelStatus->setText(QObject::tr("%1 XY-Wing technic(s) has been found").arg(vWing.size()));
+
+
+  int cBox = 1;
+
+  for (auto w: vWing)
+    {
+      miniGrid *XYWingGrid = new miniGrid(this);
+
+      stackedWidget->addWidget(XYWingGrid);
+
+      XYWingGrid->insertCell(sudoku->getCell(w.cellNumbers[0]));
+      XYWingGrid->insertCell(sudoku->getCell(w.cellNumbers[1]));
+      XYWingGrid->insertCell(sudoku->getCell(w.cellNumbers[2]));
+
+      QMap<int, QColor> cHighLight;
+      cHighLight[w.X] = Qt::yellow;
+      cHighLight[w.Y] = Qt::yellow;
+      cHighLight[w.Z] = Qt::yellow;
+
+      XYWingGrid->insertHighLighted(w.cellNumbers[0], cHighLight);
+      XYWingGrid->insertHighLighted(w.cellNumbers[1], cHighLight);
+      XYWingGrid->insertHighLighted(w.cellNumbers[2], cHighLight);
+
+      ui->pageComboBox->addItem("XY-Wing#" + QString::number(cBox++));
+
+      stackedWidgets.push_back(XYWingGrid);
+    }
 }

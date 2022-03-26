@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    abstractTechnics.cpp \
     cell.cpp \
     cellWidget.cpp \
     commands.cpp \
@@ -18,9 +19,11 @@ SOURCES += \
     mainwindow.cpp \
     miniGrid.cpp \
     sudoku.cpp \
-    sudokuSolver.cpp
+    sudokuSolver.cpp \
+    wing.cpp
 
 HEADERS += \
+    abstractTechnics.h \
     cell.h \
     cellWidget.h \
     commands.h \
@@ -29,7 +32,8 @@ HEADERS += \
     mainwindow.h \
     miniGrid.h \
     sudoku.h \
-    sudokuSolver.h
+    sudokuSolver.h \
+    wing.h
 
 FORMS += \
     mainwindow.ui
