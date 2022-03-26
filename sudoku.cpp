@@ -159,3 +159,30 @@ QVector<QSharedPointer<Cell> > Sudoku::getCells() const
 {
   return cells;
 }
+
+
+bool Sudoku::IsSameGroup(Sections sec, QSet<int> cells)
+{
+  QSet<int> groupNo;
+
+  for (const auto& c: cells)
+    {
+      if (sec == Sections::BOX)
+        {
+          groupNo.insert(getCell(c)->getBoxNumber());
+        }
+      else if (sec == Sections::COLUMN)
+        {
+          groupNo.insert(getCell(c)->getColumnNumber());
+        }
+      else if (sec == Sections::ROW)
+        {
+          groupNo.insert(getCell(c)->getRowNumber());
+        }
+    }
+
+  if (groupNo.size() > 1)
+    return false;
+  else
+    return true;
+}

@@ -14,6 +14,13 @@ public:
 
 Sudoku();
 
+enum Sections {
+  ROW=0,
+  COLUMN = 1,
+  BOX=2,
+};
+
+
 QVector<QSharedPointer<Group> > getBoxes() const;
 QSharedPointer<Cell>  getCell(int cellNo) const;
 QSet<int> getIntersectCells(int cellNo) const;
@@ -41,6 +48,9 @@ QVector<QSharedPointer<Group> > getRows() const;
 
 QVector<QSharedPointer<Cell> > getCells() const;
 
+
+bool IsSameGroup(Sections sec, QSet<int> cells);
+
 private:
 QVector<QSharedPointer<Cell> > cells;
 
@@ -54,5 +64,8 @@ int emptyCellCount = 0; //candidates cells also
 
 QVector<QSharedPointer<Cell> > emptyCells;
 };
+
+
+
 
 #endif // SUDOKU_H
