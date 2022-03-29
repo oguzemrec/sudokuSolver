@@ -5,24 +5,24 @@
 #include "sudoku.h"
 
 
-class XYWing /*: public AbstractTechnics*/
+class YWing /*: public AbstractTechnics*/
 {
 public:
-XYWing();
+YWing();
 
 QString getInfo()
 {
-  return QObject::tr("XY-Wing Solution Method: X=%1,Y=%2, Z=%3").arg(X).arg(Y).arg(Z);
+  return QObject::tr("Y-Wing Solution Method: Z=%1").arg(Z);
 }
 
 
-QVector<XYWing> findTechnics(const QSharedPointer<Sudoku> &sudoku);
+QVector<YWing> findTechnics(const QSharedPointer<Sudoku> &sudoku);
 
-int X = 0, Y = 0, Z = 0;
+int X = 0;
+int Y = 0;
+int Z = 0;
 int cellNumbers[3];
-
-//signals:
-//void technicResolved(QVector<QVector<int>>);
+QSet<int> intersectedCells;
 };
 
 #endif // WING_H

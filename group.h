@@ -33,6 +33,7 @@ Group(int no, QVector<QSharedPointer<Cell> > t);
 void show();
 
 QVector<QSharedPointer<Cell> > getCells() const;
+QSet<int> getCellNumbers() const;
 
 private:
 int number = 0;

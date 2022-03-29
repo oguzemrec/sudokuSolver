@@ -47,6 +47,9 @@ void on_buttonReset_clicked();
 
 void on_buttonXYWing_clicked();
 
+
+void on_pageComboBox_activated(int index);
+
 private:
 Ui::MainWindow *ui;
 

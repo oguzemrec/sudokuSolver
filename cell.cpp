@@ -125,7 +125,7 @@ Cell::ToggleCandidateSts Cell::toggleCandidate(int num)
   return res;
 }
 
-QSet<int> Cell::getCandidates()
+QSet<int> Cell::getCandidates()const
 {
   return candidates;
 }
@@ -156,17 +156,17 @@ bool Cell::getClueFlag() const
   return clueFlag;
 }
 
-group_ptr Cell::getOwnBox() const
+const group_ptr&  Cell::getOwnBox() const
 {
   return ownBox;
 }
 
-group_ptr Cell::getOwnColumn() const
+const group_ptr&  Cell::getOwnColumn() const
 {
   return ownColumn;
 }
 
-group_ptr Cell::getOwnRow() const
+const group_ptr&  Cell::getOwnRow() const
 {
   return ownRow;
 }

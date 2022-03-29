@@ -1,16 +1,16 @@
 #include "wing.h"
 #include <QDebug>
 
-XYWing::XYWing()
+YWing::YWing()
 //  : AbstractTechnics(this)
 {
 }
 
 
 //try cell 3, 81, 18
-QVector<XYWing>  XYWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
+QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
 {
-  QVector<XYWing> solutions;
+  QVector<YWing> solutions;
 
 
   QMap<int, QSet<int> > twoCandidateCells;
@@ -28,7 +28,7 @@ QVector<XYWing>  XYWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
 
   auto findRelatedCells = [ = ](const int& cellNo)->QSet<int> {
                             QSet<int> relatedCells;
-                            auto inter = sudoku->getIntersectCells(cellNo);
+                            auto inter = sudoku->getCommonCells(cellNo);
 
                             for (const auto& icell: inter)
                               if (twoCandidateCells.count(icell) > 0 && icell != cellNo)
@@ -94,14 +94,12 @@ QVector<XYWing>  XYWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
 
           if (rcCandidates.find(potX) != rcCandidates.end())
             {
-              auto it = rcCandidates.find(potX);
               for (const auto& it:rcCandidates)
                 if (it != potX && it != potY)     //to prevent the same XY
                   potZ = it;
             }
           else if (rcCandidates.find(potY) != rcCandidates.end())
             {
-              auto it = rcCandidates.find(potY);
               for (const auto& it:rcCandidates)
                 if (it != potY && it != potX)
                   potZ = it;
@@ -114,7 +112,7 @@ QVector<XYWing>  XYWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
           if (potZ == 0)
             continue;
 
-          XYWing xywing;       //Arbitrator
+          YWing xywing;       //Arbitrator
           xywing.X = potX;
           xywing.Y = potY;
           xywing.Z = potZ;
@@ -138,7 +136,11 @@ QVector<XYWing>  XYWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
                       xywing.cellNumbers[1] = sec;
                       xywing.cellNumbers[2] = third;
                       if (checkSameGroups(xywing.cellNumbers[0], xywing.cellNumbers[1], xywing.cellNumbers[2]) != true)
-                        solutions.push_back(xywing);
+                        {
+                          xywing.intersectedCells = sudoku->getIntersectCells(sec, third);
+                          xywing.intersectedCells.remove(targetCellNumber); //remove the target cell
+                          solutions.push_back(xywing);
+                        }
                     }
                 }
 

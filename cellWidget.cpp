@@ -170,6 +170,7 @@ void sudokuCellWidget::setClickable(bool value)
   clickable = value;
 }
 
+
 void sudokuCellWidget::mousePressEvent(QMouseEvent *event)
 {
   if (clickable != false)

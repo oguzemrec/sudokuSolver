@@ -23,7 +23,10 @@ enum Sections {
 
 QVector<QSharedPointer<Group> > getBoxes() const;
 QSharedPointer<Cell>  getCell(int cellNo) const;
-QSet<int> getIntersectCells(int cellNo) const;
+QSet<int> getCommonCells(int cellNo) const;
+
+QSet<int> getIntersectCells(int cell1, int cell2) const;
+
 
 int getClueCellsCount() const
 {

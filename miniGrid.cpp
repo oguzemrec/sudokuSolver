@@ -1,7 +1,7 @@
 #include "miniGrid.h"
 #include "QGridLayout"
 #include "QPushButton"
-
+#include "QLabel"
 miniGrid::miniGrid(QWidget *parent) : QWidget(parent)
 {
   int boxSize = 35 * 9;
@@ -9,7 +9,10 @@ miniGrid::miniGrid(QWidget *parent) : QWidget(parent)
   setMinimumSize(QSize(boxSize, boxSize));
   setMaximumSize(QSize(boxSize, boxSize));
 
-  QGridLayout *gridLayout = new QGridLayout(this);
+  QGridLayout *gridLayout = new QGridLayout;
+
+  layoutWidget = new QVBoxLayout(this);
+  layoutWidget->addLayout(gridLayout);
 
   for (int y = 0; y < 9; y++)     //take placing the cells with order
     {
@@ -73,4 +76,16 @@ void miniGrid::insertHighLighted(const int &cellNo, QMap<int, QColor> candidates
       gridCells[cellNo]->insertHighLighted(i.key(), i.value());
       gridCells[cellNo]->updateCellWidget();
     }
+}
+
+
+
+QString miniGrid::getInfo()
+{
+  return info;
+}
+
+void miniGrid::setInfo(const QString &value)
+{
+  info = value;
 }

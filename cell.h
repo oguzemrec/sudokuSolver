@@ -66,7 +66,7 @@ enum  class ToggleCandidateSts {
 void addCandidate(int num);
 void removeCandidate(int num);
 ToggleCandidateSts toggleCandidate(int num);
-QSet<int> getCandidates();
+QSet<int> getCandidates() const;
 
 void setDefault();
 void resetCell();
@@ -74,11 +74,11 @@ bool getSolvedFlag() const;
 
 bool getClueFlag() const;
 
-group_ptr getOwnBox() const;
+const group_ptr& getOwnBox() const;
 
-group_ptr getOwnColumn() const;
+const group_ptr& getOwnColumn() const;
 
-group_ptr getOwnRow() const;
+const group_ptr& getOwnRow() const;
 
 private:
 int cellValue = 0;

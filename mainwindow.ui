@@ -209,28 +209,22 @@
    <widget class="QFrame" name="verticalFrame">
     <property name="geometry">
      <rect>
-      <x>750</x>
-      <y>40</y>
+      <x>751</x>
+      <y>41</y>
       <width>320</width>
-      <height>330</height>
+      <height>320</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+     <sizepolicy hsizetype="Ignored" vsizetype="Maximum">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
     <property name="minimumSize">
      <size>
-      <width>320</width>
-      <height>330</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>320</width>
-      <height>330</height>
+      <width>0</width>
+      <height>320</height>
      </size>
     </property>
     <property name="frameShape">
@@ -328,11 +322,43 @@
        </item>
        <item>
         <widget class="QComboBox" name="pageComboBox">
+         <property name="minimumSize">
+          <size>
+           <width>110</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>100</width>
+           <width>120</width>
            <height>24</height>
           </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="leftMargin">
+        <number>11</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="labelInfo">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -344,7 +370,7 @@
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>440</y>
+      <y>480</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -372,43 +398,11 @@
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>750</x>
-      <y>400</y>
-      <width>291</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="maximumSize">
-        <size>
-         <width>45</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Status:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelStatus">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QPushButton" name="buttonXYWing">
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>440</y>
+      <y>480</y>
       <width>80</width>
       <height>24</height>
      </rect>

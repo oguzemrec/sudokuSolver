@@ -102,23 +102,42 @@ QSharedPointer<Cell>  Sudoku::getCell(int cellNo) const
   return cells[cellNo - 1];
 }
 
-QSet<int> Sudoku::getIntersectCells(int cellNo) const
+QSet<int> Sudoku::getCommonCells(int cellNo) const
 {
-  QSet<int> inter;
+  QSet<int> common;
   auto box = cells[cellNo - 1]->getOwnBox()->getCells();
   auto column = cells[cellNo - 1]->getOwnColumn()->getCells();
   auto row = cells[cellNo - 1]->getOwnRow()->getCells();
 
   for (auto const& b: box)
-    inter.insert(b->getCellNumber());
+    common.insert(b->getCellNumber());
 
   for (auto const& c: column)
-    inter.insert(c->getCellNumber());
+    common.insert(c->getCellNumber());
 
   for (auto const& r: row)
-    inter.insert(r->getCellNumber());
+    common.insert(r->getCellNumber());
 
-  return inter;
+  return common;
+}
+
+QSet<int> Sudoku::getIntersectCells(int cell1, int cell2) const
+{
+  QSet<int> cells1, cells2;
+
+  cells1 += cells[cell1 - 1]->getOwnBox()->getCellNumbers();
+  cells1 += cells[cell1 - 1]->getOwnColumn()->getCellNumbers();
+  cells1 += cells[cell1 - 1]->getOwnRow()->getCellNumbers();
+
+  cells2 += cells[cell2 - 1]->getOwnBox()->getCellNumbers();
+  cells2 += cells[cell2 - 1]->getOwnColumn()->getCellNumbers();
+  cells2 += cells[cell2 - 1]->getOwnRow()->getCellNumbers();
+
+  auto inter = cells1.intersect(cells2);
+
+  inter.remove(cell1);
+  inter.remove(cell2);
+  return cells1.intersect(cells2);
 }
 
 

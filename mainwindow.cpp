@@ -85,8 +85,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
   stackedWidget = new QStackedWidget(this);
   ui->verticalLayout_2->addWidget(stackedWidget);
-  connect(ui->pageComboBox, QOverload<int>::of(&QComboBox::activated),
-          stackedWidget, &QStackedWidget::setCurrentIndex);
+//  connect(ui->pageComboBox, QOverload<int>::of(&QComboBox::activated),
+//          stackedWidget, &QStackedWidget::setCurrentIndex);
 
   solver = new sudokuSolver(this);
   connect(solver, &sudokuSolver::solutionEvent, this, &MainWindow::solutionEvent);
@@ -324,8 +324,10 @@ void MainWindow::updateMethodWidget(QString method)
       stackedWidget->removeWidget(w);
       w->deleteLater();
     }
+
   stackedWidgets.clear();
   ui->pageComboBox->clear();
+  ui->labelInfo->clear();
   ui->labelMethod->setText(method);
 }
 
@@ -342,10 +344,10 @@ void MainWindow::solutionEvent(bool solutionRes, int iterationCount)
       ui->pageComboBox->addItem(tr("Solution"));
       stackedWidgets.push_back(solutionGrid);
 
-      ui->labelStatus->setText(QObject::tr("Solved with %1 iterations").arg(iterationCount));
+      ui->labelInfo->setText(QObject::tr("Solved with %1 iterations").arg(iterationCount));
     }
   else
-    ui->labelStatus->setText(QObject::tr("Couldn't be solved with %1 iterations").arg(iterationCount));
+    ui->labelInfo->setText(QObject::tr("Couldn't be solved with %1 iterations").arg(iterationCount));
 }
 
 void MainWindow::on_buttonSolution_clicked()
@@ -358,20 +360,17 @@ void MainWindow::on_buttonSolution_clicked()
 #include "wing.h"
 void MainWindow::on_buttonXYWing_clicked()
 {
-  XYWing wing;
+  YWing wing;
 
-  this->updateMethodWidget("XY-Wing");
+  this->updateMethodWidget("Y-Wing");
 
   auto vWing = wing.findTechnics(sudoku);
 
   if (vWing.size() == 0)
     {
-      ui->labelStatus->setText(QObject::tr("Couldn't be found XY-Wing"));
+      ui->labelInfo->setText(QObject::tr("Couldn't be found Y-Wing"));
       return;
     }
-
-  ui->labelStatus->setText(QObject::tr("%1 XY-Wing technic(s) has been found").arg(vWing.size()));
-
 
   int cBox = 1;
 
@@ -394,8 +393,39 @@ void MainWindow::on_buttonXYWing_clicked()
       XYWingGrid->insertHighLighted(w.cellNumbers[1], cHighLight);
       XYWingGrid->insertHighLighted(w.cellNumbers[2], cHighLight);
 
-      ui->pageComboBox->addItem("XY-Wing#" + QString::number(cBox++));
+      for (const auto& i: w.intersectedCells)
+        {
+          const auto& eCell = sudoku->getCell(i);
+          auto cand = eCell->getCandidates();
+
+          if (cand.find(w.Z) == cand.cend()) //pass: if the Z is not invoved by the effected cell's candidates
+            continue;
+
+          QMap<int, QColor> iHighLight;
+          iHighLight[w.Z] = Qt::red;
+
+          XYWingGrid->insertCell(eCell);
+          XYWingGrid->insertHighLighted(i, iHighLight);
+        }
+
+      ui->pageComboBox->addItem("Y-Wing#" + QString::number(cBox++));
+      XYWingGrid->setInfo(w.getInfo());
 
       stackedWidgets.push_back(XYWingGrid);
+    }
+}
+
+//TODO: default comboboxItem's event
+void MainWindow::on_pageComboBox_activated(int index)
+{
+  stackedWidget->setCurrentIndex(index);
+
+
+  miniGrid * mini = static_cast<miniGrid *>(stackedWidget->widget(index));
+
+  if (mini->getInfo() != "")
+    {
+      QString order = QObject::tr(" (%1/%2):  ").arg(index + 1).arg(stackedWidgets.size());
+      ui->labelInfo->setText(order + mini->getInfo());
     }
 }
