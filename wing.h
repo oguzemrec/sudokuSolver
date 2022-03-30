@@ -5,10 +5,36 @@
 #include "sudoku.h"
 
 
+class XYZWing /*: public AbstractTechnics*/
+{
+public:
+
+XYZWing()
+{
+};
+
+QString getInfo()
+{
+  return QObject::tr("XYZ-Wing Solution Method: Z=%1").arg(Z);
+}
+
+
+QVector<XYZWing> findTechnics(const QSharedPointer<Sudoku> &sudoku);
+
+int X = 0;
+int Y = 0;
+int Z = 0;
+int cellNumbers[3];
+QSet<int> intersectedCells;
+};
+
 class YWing /*: public AbstractTechnics*/
 {
 public:
-YWing();
+
+YWing()
+{
+};
 
 QString getInfo()
 {

@@ -1,18 +1,9 @@
 #include "wing.h"
 #include <QDebug>
 
-YWing::YWing()
-//  : AbstractTechnics(this)
-{
-}
-
-
-//try cell 3, 81, 18
 QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
 {
   QVector<YWing> solutions;
-
-
   QMap<int, QSet<int> > twoCandidateCells;
 
   sudoku->scanGrid();
@@ -24,14 +15,13 @@ QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
       if (candidates.size() == 2)
         twoCandidateCells.insert(c->getCellNumber(), candidates);
     }
-  qDebug() << "twoCandidateCells" << twoCandidateCells.size();
 
   auto findRelatedCells = [ = ](const int& cellNo)->QSet<int> {
                             QSet<int> relatedCells;
                             auto inter = sudoku->getCommonCells(cellNo);
 
                             for (const auto& icell: inter)
-                              if (twoCandidateCells.count(icell) > 0 && icell != cellNo)
+                              if (twoCandidateCells.count(icell) > 0 && icell != cellNo) //check if it's two candiate or not and not equal the pivot cell number
                                 relatedCells.insert(icell);
 
                             return relatedCells;
@@ -75,7 +65,7 @@ QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
         continue;
 
       QSetIterator<int > setIt(i.value());
-      int targetCellNumber = i.key();
+      int pivotCellNumber = i.key();
       int potX = setIt.next();
       int potY = setIt.next();
       int potZ = 0;
@@ -112,10 +102,10 @@ QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
           if (potZ == 0)
             continue;
 
-          YWing xywing;       //Arbitrator
-          xywing.X = potX;
-          xywing.Y = potY;
-          xywing.Z = potZ;
+          YWing xyzWing;       //Arbitrator
+          xyzWing.X = potX;
+          xyzWing.Y = potY;
+          xyzWing.Z = potZ;
 
           QSet<int> potCell2{ potY, potZ };
           QSet<int> potCell3{ potX, potZ };
@@ -124,22 +114,19 @@ QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
 
           if (SecondCellNumber.size() != 0 && ThirdCellNumber.size() != 0)
             {
-              qDebug() << "targetCellNumber" << targetCellNumber;
-              qDebug() << "SecondCellNumber" << SecondCellNumber.size();
-              qDebug() << "ThirdCellNumber" << ThirdCellNumber.size();
-              xywing.cellNumbers[0] = targetCellNumber;
+              xyzWing.cellNumbers[0] = pivotCellNumber;
 
               for (const auto& sec:SecondCellNumber)
                 {
                   for (const auto& third: ThirdCellNumber)
                     {
-                      xywing.cellNumbers[1] = sec;
-                      xywing.cellNumbers[2] = third;
-                      if (checkSameGroups(xywing.cellNumbers[0], xywing.cellNumbers[1], xywing.cellNumbers[2]) != true)
+                      xyzWing.cellNumbers[1] = sec;
+                      xyzWing.cellNumbers[2] = third;
+                      if (checkSameGroups(xyzWing.cellNumbers[0], xyzWing.cellNumbers[1], xyzWing.cellNumbers[2]) != true)
                         {
-                          xywing.intersectedCells = sudoku->getIntersectCells(sec, third);
-                          xywing.intersectedCells.remove(targetCellNumber); //remove the target cell
-                          solutions.push_back(xywing);
+                          xyzWing.intersectedCells = sudoku->getIntersectCells(sec, third);
+                          xyzWing.intersectedCells.remove(pivotCellNumber); //remove the target cell
+                          solutions.push_back(xyzWing);
                         }
                     }
                 }
@@ -152,44 +139,133 @@ QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
 
 
   return solutions;
+}
+
+QVector<XYZWing> XYZWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
+{
+  QVector<XYZWing> solutions;
+  QMap<int, QSet<int> > threeCandidateCells;
 
 
-  //  wing.X = 7; wing.Y = 1;  wing.Z = 2;
-  //  wing.cellNumbers[0] = 3;
-  //  wing.cellNumbers[1] = 18;
-  //  wing.cellNumbers[2] = 81;
-  //  solutions.push_back(wing);
+  sudoku->scanGrid();
+
+  auto cells = sudoku->getEmptyCells();
+
+  for (const auto &c: cells)    //first distillation to get three size candidates
+    {
+      auto candidates = c->getCandidates();
+      if (candidates.size() == 3)
+        threeCandidateCells.insert(c->getCellNumber(), candidates);
+    }
+
+  auto findIntersectedTwoCandCells = [ = ](const int& cellNo, const QSet<int>& pivotCandidates)->QSet<int> {
+                                       QSet<int> relatedCells;
+
+                                       auto common = sudoku->getCommonCells(cellNo);
+
+                                       for (const auto& icell: common)
+                                         {
+                                           auto icellCandidates = sudoku->getCell(icell)->getCandidates();
+                                           if (icellCandidates.size() == 2)
+                                             {
+                                               auto temp = pivotCandidates;
+                                               if (auto inter = temp.intersect(icellCandidates); inter.size() == 2)
+                                                 relatedCells.insert(icell);
+                                             }
+                                         }
 
 
-  //  wing.X = 2; wing.Y = 4;  wing.Z = 8;
-  //  wing.cellNumbers[0] = 11;
-  //  wing.cellNumbers[1] = 16;
-  //  wing.cellNumbers[2] = 23;
-  //  solutions.push_back(wing);
+                                       return relatedCells;
+                                     };
 
-  //  return solutions;
-  //  auto cell_3 = sudoku->getCell(3);
-  //  auto cell_81 = sudoku->getCell(81);
-  //  auto cell_18 = sudoku->getCell(18);
-  //  auto cell_80 = sudoku->getCell(80);   //value
+  auto findConnectedCells = [ = ](const QSet<int>& potential, const QSet<int>& relatedCells, QMapIterator<int, QSet<int> > twoCandidateCells)->QVector<int> {
+                              QVector<int> cellNo;
+                              QMapIterator<int, QSet<int> > i(twoCandidateCells);
 
-  //  QMap<int, QColor> cellCandidates;
+                              while (i.hasNext())
+                                {
+                                  i.next();
+                                  auto no = i.key();
+                                  auto candidates = i.value();
+                                  if (candidates == potential)
+                                    if (relatedCells.find(no) != relatedCells.constEnd())
+                                      cellNo.push_back(no);
+                                }
+                              return cellNo;
+                            };
 
-  //  int X = 3, Y = 1, Z = 7;
-
-  //  cellCandidates.insert(X, Qt::yellow);
-  //  cellCandidates.insert(Y, Qt::red);
-  //  effectedCells.insert(3, cellCandidates);
-
-  //  cellCandidates.remove(Y);
-  //  cellCandidates.insert(Z, Qt::red);
-  //  effectedCells.insert(18, cellCandidates);
-
-  //  cellCandidates.remove(X);
-  //  cellCandidates.insert(Y, Qt::yellow);
-  //  effectedCells.insert(81, cellCandidates);
+  auto checkSameGroups = [ = ](int c1, int c2, int c3)->bool {
+                           bool res = false;
 
 
-  //  cellCandidates.clear();
-  //  effectedCells.insert(81, cellCandidates);
+                           res |= sudoku->IsSameGroup(Sudoku::ROW, { c1, c2, c3 });
+                           res |= sudoku->IsSameGroup(Sudoku::COLUMN, { c1, c2, c3 });
+                           res |= sudoku->IsSameGroup(Sudoku::BOX, { c1, c2, c3 });
+                           return res;
+                         };
+
+  QMapIterator<int, QSet<int> > i(threeCandidateCells);
+
+  while (i.hasNext())
+    {
+      i.next();
+
+      auto relatedCells = findIntersectedTwoCandCells(i.key(), i.value());
+
+      QMap<int, QSet<int> > twoRelatedCandidateCells;
+      for (const auto &c: relatedCells)    //searh two candidates Cells in related cells for two cells
+        {
+          const auto& candidates = sudoku->getCell(c)->getCandidates();
+          twoRelatedCandidateCells.insert(c, candidates);
+        }
+
+      if (relatedCells.size() == 0)
+        continue;
+
+      QSetIterator<int> setIt(i.value());
+      int pivotCellNumber = i.key();
+      int potX = setIt.next();
+      int potY = setIt.next();
+      int potZ = setIt.next();
+
+
+
+      const auto createSolutionMethod = [ = ]( QSet<int> potCell2, QSet<int> potCell3, int X, int Y, int common) ->QVector<XYZWing> {
+                                          QVector<XYZWing> solution;
+                                          QVector<int> SecondCells = findConnectedCells(potCell2, relatedCells, twoRelatedCandidateCells);
+                                          QVector<int> ThirdCells = findConnectedCells(potCell3, relatedCells, twoRelatedCandidateCells);
+
+
+                                          XYZWing xyzWing; //Arbitrator
+
+                                          xyzWing.X = X;
+                                          xyzWing.Y = Y;
+                                          xyzWing.Z = common;
+
+                                          xyzWing.cellNumbers[0] = pivotCellNumber;
+                                          for (const auto& sec:SecondCells)
+                                            {
+                                              for (const auto& third: ThirdCells)
+                                                {
+                                                  xyzWing.cellNumbers[1] = sec;
+                                                  xyzWing.cellNumbers[2] = third;
+                                                  if (checkSameGroups(xyzWing.cellNumbers[0], xyzWing.cellNumbers[1], xyzWing.cellNumbers[2]) != true)
+                                                    {
+                                                      xyzWing.intersectedCells = sudoku->getIntersectCells(pivotCellNumber, sec, third);
+                                                      xyzWing.intersectedCells.remove(pivotCellNumber); //remove the target cell
+
+                                                      solution.push_back(xyzWing);
+                                                      qDebug() << xyzWing.getInfo();
+                                                    }
+                                                }
+                                            }
+                                          return solution;
+                                        };
+
+
+      solutions.append(createSolutionMethod(QSet<int> { potY, potX }, QSet<int> { potX, potZ }, potZ, potY, potX));
+      solutions.append(createSolutionMethod(QSet<int> { potY, potX }, QSet<int> { potY, potZ }, potX, potZ, potY));
+      solutions.append(createSolutionMethod(QSet<int> { potY, potZ }, QSet<int> { potX, potZ }, potX, potY, potZ));
+    }
+  return solutions;
 }

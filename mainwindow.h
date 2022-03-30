@@ -50,6 +50,10 @@ void on_buttonXYWing_clicked();
 
 void on_pageComboBox_activated(int index);
 
+void on_buttonFillPoss_clicked();
+
+void on_buttonXYZWing_clicked();
+
 private:
 Ui::MainWindow *ui;
 

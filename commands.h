@@ -59,6 +59,23 @@ widgetWeakPtr w;
 
 int candidate;
 };
+class InsertCandidate : public QUndoCommand
+{
+public:
+InsertCandidate(cellWeakPtr c, widgetWeakPtr w, QSet<int> oldCandidates, QSet<int> newCandidates,
+                QUndoCommand *parent = nullptr);
+
+private:
+
+void redo() override;
+void undo() override;
+
+cellWeakPtr c;
+widgetWeakPtr w;
+
+QSet<int> candidates;
+QSet<int> oldCandidates;
+};
 
 class ToggleCandidate : public QUndoCommand
 {

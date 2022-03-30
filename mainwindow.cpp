@@ -158,7 +158,19 @@ void MainWindow::keyClicked(int number)
   ui->labelClueNumber->setText(QString::number(sudoku->getClueCellsCount()));
 }
 
+void MainWindow::on_buttonFillPoss_clicked()
+{
+  if (selectedCell == -1)
+    return;
 
+  auto w = gridCells[selectedCell];
+  auto cell = sudoku->getCell(selectedCell);
+
+  if (cell->getClueFlag() != false || cell->getSolvedFlag() != false)
+    return;       //to prevent the same command and entering certain value
+
+  undoStack->push(new InsertCandidate(cell, w, cell->getCandidates(), sudoku->getPossibilities(cell->getCellNumber())));
+}
 
 void MainWindow::on_buttonErase_clicked()
 {
@@ -376,22 +388,22 @@ void MainWindow::on_buttonXYWing_clicked()
 
   for (auto w: vWing)
     {
-      miniGrid *XYWingGrid = new miniGrid(this);
+      miniGrid *YWingGrid = new miniGrid(this);
 
-      stackedWidget->addWidget(XYWingGrid);
+      stackedWidget->addWidget(YWingGrid);
 
-      XYWingGrid->insertCell(sudoku->getCell(w.cellNumbers[0]));
-      XYWingGrid->insertCell(sudoku->getCell(w.cellNumbers[1]));
-      XYWingGrid->insertCell(sudoku->getCell(w.cellNumbers[2]));
+      YWingGrid->insertCell(sudoku->getCell(w.cellNumbers[0]));
+      YWingGrid->insertCell(sudoku->getCell(w.cellNumbers[1]));
+      YWingGrid->insertCell(sudoku->getCell(w.cellNumbers[2]));
 
       QMap<int, QColor> cHighLight;
       cHighLight[w.X] = Qt::yellow;
       cHighLight[w.Y] = Qt::yellow;
       cHighLight[w.Z] = Qt::yellow;
 
-      XYWingGrid->insertHighLighted(w.cellNumbers[0], cHighLight);
-      XYWingGrid->insertHighLighted(w.cellNumbers[1], cHighLight);
-      XYWingGrid->insertHighLighted(w.cellNumbers[2], cHighLight);
+      YWingGrid->insertHighLighted(w.cellNumbers[0], cHighLight);
+      YWingGrid->insertHighLighted(w.cellNumbers[1], cHighLight);
+      YWingGrid->insertHighLighted(w.cellNumbers[2], cHighLight);
 
       for (const auto& i: w.intersectedCells)
         {
@@ -404,14 +416,14 @@ void MainWindow::on_buttonXYWing_clicked()
           QMap<int, QColor> iHighLight;
           iHighLight[w.Z] = Qt::red;
 
-          XYWingGrid->insertCell(eCell);
-          XYWingGrid->insertHighLighted(i, iHighLight);
+          YWingGrid->insertCell(eCell);
+          YWingGrid->insertHighLighted(i, iHighLight);
         }
 
       ui->pageComboBox->addItem("Y-Wing#" + QString::number(cBox++));
-      XYWingGrid->setInfo(w.getInfo());
+      YWingGrid->setInfo(w.getInfo());
 
-      stackedWidgets.push_back(XYWingGrid);
+      stackedWidgets.push_back(YWingGrid);
     }
 }
 
@@ -429,3 +441,63 @@ void MainWindow::on_pageComboBox_activated(int index)
       ui->labelInfo->setText(order + mini->getInfo());
     }
 }
+
+
+
+void MainWindow::on_buttonXYZWing_clicked()
+{
+  XYZWing wing;
+
+  this->updateMethodWidget("XYZ-Wing");
+
+  auto vWing = wing.findTechnics(sudoku);
+
+  if (vWing.size() == 0)
+    {
+      ui->labelInfo->setText(QObject::tr("Couldn't be found Y-Wing"));
+      return;
+    }
+
+  int cBox = 1;
+
+  for (auto w: vWing)
+    {
+      miniGrid *XYZWingGrid = new miniGrid(this);
+
+      stackedWidget->addWidget(XYZWingGrid);
+
+      XYZWingGrid->insertCell(sudoku->getCell(w.cellNumbers[0]));
+      XYZWingGrid->insertCell(sudoku->getCell(w.cellNumbers[1]));
+      XYZWingGrid->insertCell(sudoku->getCell(w.cellNumbers[2]));
+
+      QMap<int, QColor> cHighLight;
+      cHighLight[w.X] = Qt::yellow;
+      cHighLight[w.Y] = Qt::yellow;
+      cHighLight[w.Z] = Qt::yellow;
+
+      XYZWingGrid->insertHighLighted(w.cellNumbers[0], cHighLight);
+      XYZWingGrid->insertHighLighted(w.cellNumbers[1], cHighLight);
+      XYZWingGrid->insertHighLighted(w.cellNumbers[2], cHighLight);
+
+      for (const auto& i: w.intersectedCells)
+        {
+          const auto& eCell = sudoku->getCell(i);
+          auto cand = eCell->getCandidates();
+
+          if (cand.find(w.Z) == cand.cend())   //pass: if the Z is not involved by the effected cell's candidates
+            continue;
+
+          QMap<int, QColor> iHighLight;
+          iHighLight[w.Z] = Qt::red;
+
+          XYZWingGrid->insertCell(eCell);
+          XYZWingGrid->insertHighLighted(i, iHighLight);
+        }
+
+      ui->pageComboBox->addItem("XYZ-Wing#" + QString::number(cBox++));
+      XYZWingGrid->setInfo(w.getInfo());
+
+      stackedWidgets.push_back(XYZWingGrid);
+    }
+}
+

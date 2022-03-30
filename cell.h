@@ -66,6 +66,7 @@ enum  class ToggleCandidateSts {
 void addCandidate(int num);
 void removeCandidate(int num);
 ToggleCandidateSts toggleCandidate(int num);
+void updateCandidates(QSet<int> can);
 QSet<int> getCandidates() const;
 
 void setDefault();

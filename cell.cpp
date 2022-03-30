@@ -68,12 +68,14 @@ void Cell::setCellValue(int value)
 {
   cellValue = value;
   solvedFlag = true;
+  candidates.clear();
 }
 
 void Cell::setCellClue(int value)
 {
   cellValue = value;
   clueFlag = true;
+  candidates.clear();
 }
 
 void Cell::removeCellClue()
@@ -99,6 +101,10 @@ void Cell::setOwnBox(group_ptr value)
 void Cell::addCandidate(int num)
 {
   candidates.insert(num);
+}
+void Cell::updateCandidates(QSet<int> can)
+{
+  candidates = can;
 }
 
 void Cell::removeCandidate(int num)
@@ -143,7 +149,7 @@ void Cell::resetCell()
   solvedFlag = false;
   clueFlag = false;
   //candidates = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-  candidates = { 1, 2, 3 };
+  candidates = { 1, 2, 3, 4 };
 }
 
 bool Cell::getSolvedFlag() const

@@ -137,9 +137,54 @@ QSet<int> Sudoku::getIntersectCells(int cell1, int cell2) const
 
   inter.remove(cell1);
   inter.remove(cell2);
-  return cells1.intersect(cells2);
+  return inter;
+}
+QSet<int> Sudoku::getIntersectCells(int cell1, int cell2, int cell3) const
+{
+  QSet<int> cells1, cells2, cells3;
+
+  cells1 += cells[cell1 - 1]->getOwnBox()->getCellNumbers();
+  cells1 += cells[cell1 - 1]->getOwnColumn()->getCellNumbers();
+  cells1 += cells[cell1 - 1]->getOwnRow()->getCellNumbers();
+
+  cells2 += cells[cell2 - 1]->getOwnBox()->getCellNumbers();
+  cells2 += cells[cell2 - 1]->getOwnColumn()->getCellNumbers();
+  cells2 += cells[cell2 - 1]->getOwnRow()->getCellNumbers();
+
+  cells3 += cells[cell3 - 1]->getOwnBox()->getCellNumbers();
+  cells3 += cells[cell3 - 1]->getOwnColumn()->getCellNumbers();
+  cells3 += cells[cell3 - 1]->getOwnRow()->getCellNumbers();
+
+  auto inter = cells3.intersect(cells1.intersect(cells2));
+
+  inter.remove(cell1);
+  inter.remove(cell2);
+  inter.remove(cell3);
+  return inter;
 }
 
+QSet<int> Sudoku::getPossibilities(int cellNo) const
+{
+  QSet<int> candidates{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+
+  auto cell = getCell(cellNo);
+
+  auto box = cell->getOwnBox();
+  auto column = cell->getOwnColumn();
+  auto row = cell->getOwnRow();
+
+  for (const auto& c: box->getCells())
+    candidates.remove(c->getCellValue());
+
+  for (const auto& c: column->getCells())
+    candidates.remove(c->getCellValue());
+
+  for (const auto& c: row->getCells())
+    candidates.remove(c->getCellValue());
+
+  return candidates;
+}
 
 
 void Sudoku::scanGrid()

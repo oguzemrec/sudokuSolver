@@ -67,7 +67,7 @@
      <rect>
       <x>20</x>
       <y>490</y>
-      <width>431</width>
+      <width>441</width>
       <height>40</height>
      </rect>
     </property>
@@ -83,6 +83,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="buttonFillPoss">
+       <property name="text">
+        <string>Fill Possibilities</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -94,13 +101,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonReset">
-       <property name="text">
-        <string>Reset</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="buttonUndo">
@@ -370,7 +370,7 @@
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>480</y>
+      <y>420</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -401,6 +401,19 @@
    <widget class="QPushButton" name="buttonXYWing">
     <property name="geometry">
      <rect>
+      <x>750</x>
+      <y>480</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Y-Wing</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonXYZWing">
+    <property name="geometry">
+     <rect>
       <x>840</x>
       <y>480</y>
       <width>80</width>
@@ -408,7 +421,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>XY-Wing</string>
+     <string>XYZ-Wing</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonReset">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>20</y>
+      <width>61</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reset</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonXWing">
+    <property name="geometry">
+     <rect>
+      <x>930</x>
+      <y>480</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>X-Wing</string>
     </property>
    </widget>
   </widget>
@@ -418,7 +457,7 @@
      <x>0</x>
      <y>0</y>
      <width>1077</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuk">

@@ -66,6 +66,7 @@ void AddClueValue::redo()
   auto widgetSharedPtr = w.toStrongRef();
 
   cellSharedPtr->setCellClue(clueValue);
+
   widgetSharedPtr->updateCellWidget();
 }
 
@@ -119,7 +120,44 @@ void RemoveCandidate::undo()
   widgetSharedPtr->updateCellWidget();
 }
 
+InsertCandidate::InsertCandidate(cellWeakPtr c_, widgetWeakPtr w_, QSet<int> oldCandidates_, QSet<int> newCandidates, QUndoCommand *parent) :
+  QUndoCommand(parent),
+  c(c_),
+  w(w_),
+  candidates(newCandidates),
+  oldCandidates(oldCandidates_)
+{
+}
 
+void InsertCandidate::redo()
+{
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  setText(QObject::tr("Filled Candidates, Cell :%1").arg(widgetSharedPtr->getCellNo()));
+
+  cellSharedPtr->updateCandidates(candidates);
+  widgetSharedPtr->updateCellWidget();
+}
+
+void InsertCandidate::undo()
+{
+  if (!c)
+    return;
+  if (!w)
+    return;
+
+  auto cellSharedPtr = c.toStrongRef();
+  auto widgetSharedPtr = w.toStrongRef();
+
+  cellSharedPtr->updateCandidates(oldCandidates);
+  widgetSharedPtr->updateCellWidget();
+}
 ToggleCandidate::ToggleCandidate(cellWeakPtr c_, widgetWeakPtr w_, int candidate_, QUndoCommand *parent) :
   QUndoCommand(parent),
   c(c_),
@@ -182,7 +220,6 @@ void EraseCell::redo()
   auto widgetSharedPtr = w.toStrongRef();
 
   cellSharedPtr->setDefault();
-  cellSharedPtr->addCandidate(oldValue);
   widgetSharedPtr->updateCellWidget();
 }
 

@@ -26,7 +26,8 @@ QSharedPointer<Cell>  getCell(int cellNo) const;
 QSet<int> getCommonCells(int cellNo) const;
 
 QSet<int> getIntersectCells(int cell1, int cell2) const;
-
+QSet<int> getIntersectCells(int cell1, int cell2, int cell3) const;
+QSet<int> getPossibilities(int cellNo) const; //candidates
 
 int getClueCellsCount() const
 {
