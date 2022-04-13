@@ -27,6 +27,7 @@ QSet<int> getCommonCells(int cellNo) const;
 
 QSet<int> getIntersectCells(int cell1, int cell2) const;
 QSet<int> getIntersectCells(int cell1, int cell2, int cell3) const;
+QSet<int> getIntersectCells(QSet<int> interCells) const;
 QSet<int> getPossibilities(int cellNo) const; //candidates
 
 int getClueCellsCount() const
@@ -49,11 +50,14 @@ void scanGrid();
 QVector<QSharedPointer<Cell> > getEmptyCells() const;
 
 QVector<QSharedPointer<Group> > getRows() const;
-
+QVector<QSharedPointer<Group> > getColumns() const;
 QVector<QSharedPointer<Cell> > getCells() const;
 
 
 bool IsSameGroup(Sections sec, QSet<int> cells);
+
+
+
 
 private:
 QVector<QSharedPointer<Cell> > cells;

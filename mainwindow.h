@@ -54,6 +54,8 @@ void on_buttonFillPoss_clicked();
 
 void on_buttonXYZWing_clicked();
 
+void on_buttonXWing_clicked();
+
 private:
 Ui::MainWindow *ui;
 

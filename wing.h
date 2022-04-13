@@ -4,6 +4,43 @@
 #include "abstractTechnics.h"
 #include "sudoku.h"
 
+class XWing
+{
+public:
+
+XWing()
+{
+};
+
+QString getInfo();
+
+
+QVector<XWing> findTechnics(const QSharedPointer<Sudoku> &sudoku);
+
+int Z = 0;
+int cellNumbers[4];
+int groupNumbers[2];     //row or coloumn
+
+private:
+QString strType = "row";   //or coloumn
+
+enum XWingType {
+  COLUMN=0,
+  ROW=1
+};
+
+struct sTwoCandidate {
+public:
+  sTwoCandidate(const QSet<QSharedPointer<Cell> >& cells_, const int &candidate_)
+  {
+    cells = cells_;
+    candidate = candidate_;
+  }
+  QSet<QSharedPointer<Cell> > cells;
+  int candidate;
+};
+};
+
 
 class XYZWing /*: public AbstractTechnics*/
 {

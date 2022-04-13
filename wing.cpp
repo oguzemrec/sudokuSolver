@@ -11,6 +11,8 @@ QVector<YWing>  YWing::findTechnics(const QSharedPointer<Sudoku>  &sudoku)
 
   for (const auto &c: cells)  //first distillation to get two size candidates
     {
+      if (c->getClueFlag() == true || c->getSolvedFlag() == true)
+        continue;
       auto candidates = c->getCandidates();
       if (candidates.size() == 2)
         twoCandidateCells.insert(c->getCellNumber(), candidates);
@@ -153,6 +155,9 @@ QVector<XYZWing> XYZWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
 
   for (const auto &c: cells)    //first distillation to get three size candidates
     {
+      if (c->getClueFlag() == true || c->getSolvedFlag() == true)
+        continue;
+
       auto candidates = c->getCandidates();
       if (candidates.size() == 3)
         threeCandidateCells.insert(c->getCellNumber(), candidates);
@@ -165,6 +170,9 @@ QVector<XYZWing> XYZWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
 
                                        for (const auto& icell: common)
                                          {
+                                           if (sudoku->getCell(icell)->getClueFlag() == true || sudoku->getCell(icell)->getSolvedFlag() == true)
+                                             continue;
+
                                            auto icellCandidates = sudoku->getCell(icell)->getCandidates();
                                            if (icellCandidates.size() == 2)
                                              {
@@ -267,5 +275,151 @@ QVector<XYZWing> XYZWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
       solutions.append(createSolutionMethod(QSet<int> { potY, potX }, QSet<int> { potY, potZ }, potX, potZ, potY));
       solutions.append(createSolutionMethod(QSet<int> { potY, potZ }, QSet<int> { potX, potZ }, potX, potY, potZ));
     }
+  return solutions;
+}
+
+
+QString XWing::getInfo()
+{
+  qDebug() << groupNumbers[0] << groupNumbers[1];
+
+  return QObject::tr("X-Wing Z=%1, %2%3-%2%4").arg(Z).arg(strType).arg(groupNumbers[0]).arg(groupNumbers[1]);
+}
+
+QVector<XWing> XWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
+{
+  auto findTwoSameCandidate = [ = ](const QVector<QSharedPointer<Cell> >& rowCol) ->QVector<sTwoCandidate > {   //cell and candiate
+                                QVector<sTwoCandidate> twoSameCandidates;
+
+                                for (int i = 1; i <= 9; ++i) //search for each number
+                                  {
+                                    QSet<QSharedPointer<Cell> >  potCells;
+                                    for (auto c: rowCol)
+                                      {
+                                        if (c->getClueFlag() == true || c->getSolvedFlag() == true || c->getCandidates().size() == 0)
+                                          continue;
+                                        auto candidates = c->getCandidates();
+                                        if (candidates.find(i) != candidates.end())
+                                          potCells.insert(c);
+                                      }
+
+                                    if (potCells.size() == 2)
+                                      {
+                                        sTwoCandidate s(potCells, i);
+                                        twoSameCandidates.push_back(s);
+                                      }
+                                  }
+
+                                return twoSameCandidates;
+                              };
+
+
+  auto checkRowColumn = [ = ](  QSet<QSharedPointer<Cell> > targetCells, QSet<QSharedPointer<Cell> > searchCells, XWingType type) ->bool {  //cell and candiate
+                          QSet<int> targetRC;
+                          QSet<int> searchRC;
+
+                          if (XWingType::ROW == type)
+                            {
+                              for (const auto&tCell : targetCells)
+                                targetRC.insert(tCell->getColumnNumber());
+
+                              for (const auto&sCell : searchCells)
+                                searchRC.insert(sCell->getColumnNumber());
+                            }
+
+                          else if (XWingType::COLUMN == type)
+                            {
+                              for (const auto&tCell : targetCells)
+                                targetRC.insert(tCell->getRowNumber());
+
+                              for (const auto&sCell : searchCells)
+                                searchRC.insert(sCell->getRowNumber());
+                            }
+
+                          return (targetRC == searchRC)? true:false;
+                        };
+
+  auto createSolution = [ = ]( sTwoCandidate target, sTwoCandidate search, XWingType type) ->XWing {  //cell and candiate
+                          XWing wing;
+
+                          if (type == XWingType::COLUMN)
+                            wing.strType = "Column";
+                          else if (type == XWingType::ROW)
+                            wing.strType = "Row";
+
+                          wing.Z = target.candidate;
+
+                          int cellOrder = 0;
+
+                          auto targetCells = target.cells;
+
+
+                          for (const auto&tCell : targetCells)
+                            {
+                              wing.cellNumbers[cellOrder++] = tCell->getCellNumber();
+
+
+                              if (type == XWingType::COLUMN)
+                                wing.groupNumbers[0] = tCell->getColumnNumber();
+                              else if (type == XWingType::ROW)
+                                wing.groupNumbers[0] = tCell->getRowNumber();
+                            }
+                          auto searchCells = search.cells;
+
+                          for (const auto&sCell : searchCells)
+                            {
+                              wing.cellNumbers[cellOrder++] = sCell->getCellNumber();
+
+
+                              if (type == XWingType::COLUMN)
+                                wing.groupNumbers[1] = sCell->getColumnNumber();
+                              else if (type == XWingType::ROW)
+                                wing.groupNumbers[1] = sCell->getRowNumber();
+                            }
+
+                          return wing;
+                        };
+
+  auto findSolutions = [ = ]( QVector<QSharedPointer<Group> > group, XWingType type) -> QVector<XWing>  {  //cell and candiate
+                         QVector<XWing> solutions;
+
+                         for (int i = 1; i <= 9; ++i)
+                           {
+                             //get target row
+                             auto targetGroupCells = findTwoSameCandidate(group[i - 1]->getCells());
+
+                             if (targetGroupCells.size() == 0)
+                               continue;
+
+                             for (int y = 1 + i ; y <= 9; ++y)
+                               {
+                                 auto searchGroupCells = findTwoSameCandidate(group[y - 1]->getCells());
+
+                                 if (searchGroupCells.size() == 0)
+                                   continue;
+
+                                 for (const auto&tar : targetGroupCells)
+                                   {
+                                     auto targetCandidate = tar.candidate;
+                                     for (const auto&ser : searchGroupCells)
+                                       {
+                                         if (ser.candidate != targetCandidate)
+                                           continue;
+
+                                         if (checkRowColumn(tar.cells, ser.cells, type) == true)
+                                           solutions.push_back(createSolution(tar, ser, type));
+
+                                         //check if row numbers are the same or not
+                                       }
+                                   }
+                               }
+                           }
+                         return solutions;
+                       };
+
+  QVector<XWing> solutions;
+
+  solutions.append(findSolutions(sudoku->getRows(), XWingType::ROW));
+  solutions.append(findSolutions(sudoku->getColumns(), XWingType::COLUMN));
   return solutions;
 }

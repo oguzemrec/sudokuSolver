@@ -97,7 +97,7 @@ int candidate;
 class EraseCell : public QUndoCommand
 {
 public:
-EraseCell(cellWeakPtr c, widgetWeakPtr w, int oldValue, QUndoCommand *parent = nullptr);
+EraseCell(cellWeakPtr c, widgetWeakPtr w, int oldValue, bool isClue, QUndoCommand *parent = nullptr);
 
 private:
 
@@ -108,6 +108,7 @@ cellWeakPtr c;
 widgetWeakPtr w;
 
 int oldValue = 0;
+bool oldValueClueMode = false;
 };
 
 #endif // COMMANDS_H

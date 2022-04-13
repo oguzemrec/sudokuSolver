@@ -163,6 +163,36 @@ QSet<int> Sudoku::getIntersectCells(int cell1, int cell2, int cell3) const
   return inter;
 }
 
+QSet<int> Sudoku::getIntersectCells(QSet<int> interCells) const
+{
+  QVector< QSet<int> > commonCells;
+  QSet<int> inter;
+
+  for (const auto&  c: interCells)
+    {
+      QSet<int> totalCellNo;
+
+      totalCellNo += cells[c - 1]->getOwnBox()->getCellNumbers();
+      totalCellNo += cells[c - 1]->getOwnColumn()->getCellNumbers();
+      totalCellNo += cells[c - 1]->getOwnRow()->getCellNumbers();
+      commonCells.push_back(totalCellNo);
+    }
+
+  for (const auto&  com: commonCells)
+    {
+      if (inter.size() == 0)
+        inter = com;
+      else
+        inter.intersect(com);
+    }
+
+  for (const auto&  c: interCells)
+    inter.remove(c);
+
+
+  return inter;
+}
+
 QSet<int> Sudoku::getPossibilities(int cellNo) const
 {
   QSet<int> candidates{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -218,6 +248,10 @@ QVector<QSharedPointer<Group> > Sudoku::getRows() const
 {
   return Rows;
 }
+QVector<QSharedPointer<Group> > Sudoku::getColumns() const
+{
+  return Columns;
+}
 
 QVector<QSharedPointer<Cell> > Sudoku::getCells() const
 {
@@ -250,3 +284,5 @@ bool Sudoku::IsSameGroup(Sections sec, QSet<int> cells)
   else
     return true;
 }
+
+

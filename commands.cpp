@@ -179,9 +179,9 @@ void ToggleCandidate::redo()
   auto res = cellSharedPtr->toggleCandidate(candidate);
 
   if (res == Cell::ToggleCandidateSts::ADDED)
-    setText(QObject::tr("Added Note, Cell :%1, Value:%2").arg(widgetSharedPtr->getCellNo()).arg(candidate));
+    setText(QObject::tr("Added Note: R%1C%2 Value:%3").arg(cellSharedPtr->getRowNumber()).arg(cellSharedPtr->getColumnNumber()).arg(candidate));
   if (res == Cell::ToggleCandidateSts::REMOVED)
-    setText(QObject::tr("Removed Note, Cell :%1, Value:%2").arg(widgetSharedPtr->getCellNo()).arg(candidate));
+    setText(QObject::tr("Removed Note: R%1C%2, Value:%3").arg(cellSharedPtr->getRowNumber()).arg(cellSharedPtr->getColumnNumber()).arg(candidate));
 
   widgetSharedPtr->updateCellWidget();
 }
@@ -201,11 +201,12 @@ void ToggleCandidate::undo()
 }
 
 
-EraseCell::EraseCell(cellWeakPtr c_, widgetWeakPtr w_, int oldValue_, QUndoCommand *parent) :
+EraseCell::EraseCell(cellWeakPtr c_, widgetWeakPtr w_, int oldValue_, bool isClue, QUndoCommand *parent) :
   QUndoCommand(parent),
   c(c_),
   w(w_),
-  oldValue(oldValue_)
+  oldValue(oldValue_),
+  oldValueClueMode(isClue)
 {
 }
 
@@ -236,6 +237,10 @@ void EraseCell::undo()
   if (oldValue == 0)
     return;
 
-  cellSharedPtr->setCellClue(oldValue);
+  if (true == oldValueClueMode)
+    cellSharedPtr->setCellClue(oldValue);
+  else
+    cellSharedPtr->setCellValue(oldValue);
+
   widgetSharedPtr->updateCellWidget();
 }

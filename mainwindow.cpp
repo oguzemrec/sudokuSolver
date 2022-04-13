@@ -116,7 +116,7 @@ void MainWindow::keyClicked(int number)
       sudokuSolver::CellEntrAttemp res = solver->isValueProper(cell, number);    //search out the other cells are neighbour
       if (res == sudokuSolver::CellEntrAttemp::NOT_FOUND)       //if the number of cell is proper
         {
-          undoStack->beginMacro(QObject::tr("Add Clue, Cell:%1's Value:%2").arg(cell->getCellNumber()).arg(number));
+          undoStack->beginMacro(QObject::tr("Added Clue: R%1C%2 Value:%3").arg(cell->getRowNumber()).arg(cell->getColumnNumber()).arg(number));
           undoStack->push(new AddClueValue(cell, w, number));
 
           auto effected = solver->effectedCells(cell, number);
@@ -138,7 +138,7 @@ void MainWindow::keyClicked(int number)
 
       if (res == sudokuSolver::CellEntrAttemp::NOT_FOUND)       //if the number of cell is proper
         {
-          undoStack->beginMacro(QObject::tr("Change Cell %1's Value:%2").arg(cell->getCellNumber()).arg(number));
+          undoStack->beginMacro(QObject::tr("Changed R%1C%2 Value:%3").arg(cell->getRowNumber()).arg(cell->getColumnNumber()).arg(number));
           undoStack->push(new ChangeCellValue(cell, w, cell->getCellValue(), number));
 
           auto effected = solver->effectedCells(cell, number);
@@ -191,8 +191,9 @@ void MainWindow::on_buttonErase_clicked()
       if (cell->getClueFlag() != true)
         break;
 
-      undoStack->beginMacro(QObject::tr("Erase Clue Cell:%1's Value:%2").arg(cell->getCellNumber()).arg(cell->getCellValue()));
-      undoStack->push(new EraseCell(cell, w, cell->getCellValue()));
+
+      undoStack->beginMacro(QObject::tr("Erased Clue: R%1C%2 Value:%3").arg(cell->getRowNumber()).arg(cell->getColumnNumber()).arg(cell->getCellValue()));
+      undoStack->push(new EraseCell(cell, w, cell->getCellValue(), cell->getClueFlag()));
       undoStack->endMacro();
 
       break;
@@ -207,8 +208,8 @@ void MainWindow::on_buttonErase_clicked()
       if (cell->getSolvedFlag() != true)
         break;
 
-      undoStack->beginMacro(QObject::tr("Erase Solved Cell:%1's Value:%2").arg(cell->getCellNumber()).arg(cell->getCellValue()));
-      undoStack->push(new EraseCell(cell, w, cell->getCellValue()));
+      undoStack->beginMacro(QObject::tr("Erased Solved R%1C%2 Value:%3").arg(cell->getRowNumber()).arg(cell->getColumnNumber()).arg(cell->getCellValue()));
+      undoStack->push(new EraseCell(cell, w, cell->getCellValue(), cell->getClueFlag()));
       undoStack->endMacro();
 
       break;
@@ -408,6 +409,10 @@ void MainWindow::on_buttonXYWing_clicked()
       for (const auto& i: w.intersectedCells)
         {
           const auto& eCell = sudoku->getCell(i);
+
+          if (eCell->getClueFlag() == true || eCell->getSolvedFlag() == true)
+            continue;
+
           auto cand = eCell->getCandidates();
 
           if (cand.find(w.Z) == cand.cend()) //pass: if the Z is not invoved by the effected cell's candidates
@@ -454,7 +459,7 @@ void MainWindow::on_buttonXYZWing_clicked()
 
   if (vWing.size() == 0)
     {
-      ui->labelInfo->setText(QObject::tr("Couldn't be found Y-Wing"));
+      ui->labelInfo->setText(QObject::tr("Couldn't be found XYZ-Wing"));
       return;
     }
 
@@ -482,6 +487,10 @@ void MainWindow::on_buttonXYZWing_clicked()
       for (const auto& i: w.intersectedCells)
         {
           const auto& eCell = sudoku->getCell(i);
+
+          if (eCell->getClueFlag() == true || eCell->getSolvedFlag() == true) //prevent the solvec cell's candidates
+            continue;
+
           auto cand = eCell->getCandidates();
 
           if (cand.find(w.Z) == cand.cend())   //pass: if the Z is not involved by the effected cell's candidates
@@ -501,3 +510,60 @@ void MainWindow::on_buttonXYZWing_clicked()
     }
 }
 
+
+void MainWindow::on_buttonXWing_clicked()
+{
+  XWing wing;
+
+  this->updateMethodWidget("X-Wing");
+
+  auto vWing = wing.findTechnics(sudoku);
+
+  if (vWing.size() == 0)
+    {
+      ui->labelInfo->setText(QObject::tr("Couldn't be found X-Wing"));
+      return;
+    }
+
+  int cBox = 1;
+
+  for (auto w: vWing)
+    {
+      miniGrid *XWingGrid = new miniGrid(this);
+
+      stackedWidget->addWidget(XWingGrid);
+
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[0]));
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[1]));
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[2]));
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[3]));
+
+      QMap<int, QColor> cHighLight;
+      cHighLight[w.Z] = Qt::yellow;
+
+      XWingGrid->insertHighLighted(w.cellNumbers[0], cHighLight);
+      XWingGrid->insertHighLighted(w.cellNumbers[1], cHighLight);
+      XWingGrid->insertHighLighted(w.cellNumbers[2], cHighLight);
+      XWingGrid->insertHighLighted(w.cellNumbers[3], cHighLight);
+
+//      for (const auto& i: w.intersectedCells)
+//        {
+//          const auto& eCell = sudoku->getCell(i);
+//          auto cand = eCell->getCandidates();
+
+//          if (cand.find(w.Z) == cand.cend())     //pass: if the Z is not involved by the effected cell's candidates
+//            continue;
+
+//          QMap<int, QColor> iHighLight;
+//          iHighLight[w.Z] = Qt::red;
+
+//          XWingGrid->insertCell(eCell);
+//          XWingGrid->insertHighLighted(i, iHighLight);
+//        }
+
+      ui->pageComboBox->addItem("X-Wing#" + QString::number(cBox++));
+      XWingGrid->setInfo(w.getInfo());
+
+      stackedWidgets.push_back(XWingGrid);
+    }
+}

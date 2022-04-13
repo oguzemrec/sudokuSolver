@@ -68,14 +68,14 @@ void Cell::setCellValue(int value)
 {
   cellValue = value;
   solvedFlag = true;
-  candidates.clear();
+  //candidates.clear();
 }
 
 void Cell::setCellClue(int value)
 {
   cellValue = value;
   clueFlag = true;
-  candidates.clear();
+  //candidates.clear();
 }
 
 void Cell::removeCellClue()
