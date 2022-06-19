@@ -567,3 +567,47 @@ void MainWindow::on_buttonXWing_clicked()
       stackedWidgets.push_back(XWingGrid);
     }
 }
+
+
+void MainWindow::on_buttonSkyScraper_clicked()
+{
+  XWing wing;
+
+  this->updateMethodWidget("SkyScraper");
+
+  auto vWing = wing.findTechnics(sudoku, true);
+
+  if (vWing.size() == 0)
+    {
+      ui->labelInfo->setText(QObject::tr("Couldn't be found SkyScraper"));
+      return;
+    }
+
+  int cBox = 1;
+
+  for (auto w: vWing)
+    {
+      miniGrid *XWingGrid = new miniGrid(this);
+
+      stackedWidget->addWidget(XWingGrid);
+
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[0]));
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[1]));
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[2]));
+      XWingGrid->insertCell(sudoku->getCell(w.cellNumbers[3]));
+
+      QMap<int, QColor> cHighLight;
+      cHighLight[w.Z] = Qt::yellow;
+
+      XWingGrid->insertHighLighted(w.cellNumbers[0], cHighLight);
+      XWingGrid->insertHighLighted(w.cellNumbers[1], cHighLight);
+      XWingGrid->insertHighLighted(w.cellNumbers[2], cHighLight);
+      XWingGrid->insertHighLighted(w.cellNumbers[3], cHighLight);
+
+
+      ui->pageComboBox->addItem("SkyScraper#" + QString::number(cBox++));
+      XWingGrid->setInfo(w.getInfo());
+
+      stackedWidgets.push_back(XWingGrid);
+    }
+}

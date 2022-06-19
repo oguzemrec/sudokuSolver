@@ -15,13 +15,14 @@ XWing()
 QString getInfo();
 
 
-QVector<XWing> findTechnics(const QSharedPointer<Sudoku> &sudoku);
+QVector<XWing> findTechnics(const QSharedPointer<Sudoku> &sudoku, bool skyScraperMode = false);
 
 int Z = 0;
 int cellNumbers[4];
 int groupNumbers[2];     //row or coloumn
 
 private:
+bool skyScraper = false;
 QString strType = "row";   //or coloumn
 
 enum XWingType {

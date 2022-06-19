@@ -263,7 +263,6 @@ QVector<XYZWing> XYZWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
                                                       xyzWing.intersectedCells.remove(pivotCellNumber); //remove the target cell
 
                                                       solution.push_back(xyzWing);
-                                                      qDebug() << xyzWing.getInfo();
                                                     }
                                                 }
                                             }
@@ -281,13 +280,12 @@ QVector<XYZWing> XYZWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
 
 QString XWing::getInfo()
 {
-  qDebug() << groupNumbers[0] << groupNumbers[1];
-
   return QObject::tr("X-Wing Z=%1, %2%3-%2%4").arg(Z).arg(strType).arg(groupNumbers[0]).arg(groupNumbers[1]);
 }
 
-QVector<XWing> XWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
+QVector<XWing> XWing::findTechnics(const QSharedPointer<Sudoku> &sudoku, bool skyScraperMode)
 {
+  skyScraper = skyScraperMode;
   auto findTwoSameCandidate = [ = ](const QVector<QSharedPointer<Cell> >& rowCol) ->QVector<sTwoCandidate > {   //cell and candiate
                                 QVector<sTwoCandidate> twoSameCandidates;
 
@@ -336,7 +334,17 @@ QVector<XWing> XWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
                                 searchRC.insert(sCell->getRowNumber());
                             }
 
-                          return (targetRC == searchRC)? true:false;
+                          auto checkRC = (targetRC == searchRC)? true:false;
+
+                          if (true == skyScraper)
+                            {
+                              if (true == targetRC.intersects(searchRC) && false == checkRC)
+                                return true;
+                            }
+                          else    //Direct X-wing
+                            {
+                              return checkRC;
+                            }
                         };
 
   auto createSolution = [ = ]( sTwoCandidate target, sTwoCandidate search, XWingType type) ->XWing {  //cell and candiate
@@ -406,10 +414,10 @@ QVector<XWing> XWing::findTechnics(const QSharedPointer<Sudoku> &sudoku)
                                          if (ser.candidate != targetCandidate)
                                            continue;
 
-                                         if (checkRowColumn(tar.cells, ser.cells, type) == true)
-                                           solutions.push_back(createSolution(tar, ser, type));
+                                         auto checkRC = checkRowColumn(tar.cells, ser.cells, type);
 
-                                         //check if row numbers are the same or not
+                                         if (true == checkRC)
+                                           solutions.push_back(createSolution(tar, ser, type));
                                        }
                                    }
                                }

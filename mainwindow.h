@@ -56,6 +56,8 @@ void on_buttonXYZWing_clicked();
 
 void on_buttonXWing_clicked();
 
+void on_buttonSkyScraper_clicked();
+
 private:
 Ui::MainWindow *ui;
 

@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Undo Example</string>
+   <string>Sudoku Solver</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QFrame" name="gridFrame">
@@ -316,7 +316,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>55</width>
+           <width>70</width>
            <height>16</height>
           </size>
          </property>
@@ -390,8 +390,8 @@
    <widget class="QPushButton" name="buttonSolution">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>420</y>
+      <x>760</x>
+      <y>430</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -424,7 +424,7 @@
      <rect>
       <x>770</x>
       <y>480</y>
-      <width>80</width>
+      <width>111</width>
       <height>24</height>
      </rect>
     </property>
@@ -435,9 +435,9 @@
    <widget class="QPushButton" name="buttonXYZWing">
     <property name="geometry">
      <rect>
-      <x>860</x>
+      <x>890</x>
       <y>480</y>
-      <width>91</width>
+      <width>111</width>
       <height>24</height>
      </rect>
     </property>
@@ -448,9 +448,9 @@
    <widget class="QPushButton" name="buttonXWing">
     <property name="geometry">
      <rect>
-      <x>960</x>
-      <y>480</y>
-      <width>80</width>
+      <x>770</x>
+      <y>520</y>
+      <width>111</width>
       <height>24</height>
      </rect>
     </property>
@@ -952,6 +952,19 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="buttonSkyScraper">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>520</y>
+      <width>111</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sky Scraper</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
