@@ -1,0 +1,7 @@
+organization=oguzemrec
+projectKey=oguzemrec_sudokuSolver
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.29861
+dashboardUrl=https://sonarcloud.io/dashboard?id=oguzemrec_sudokuSolver
+ceTaskId=AYGYDAOTskOe239soVQA
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AYGYDAOTskOe239soVQA

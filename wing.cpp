@@ -340,11 +340,11 @@ QVector<XWing> XWing::findTechnics(const QSharedPointer<Sudoku> &sudoku, bool sk
                             {
                               if (true == targetRC.intersects(searchRC) && false == checkRC)
                                 return true;
+                              else
+                                return false;
                             }
-                          else    //Direct X-wing
-                            {
-                              return checkRC;
-                            }
+                          // else    //Direct X-wing
+                          return checkRC;
                         };
 
   auto createSolution = [ = ]( sTwoCandidate target, sTwoCandidate search, XWingType type) ->XWing {  //cell and candiate
@@ -352,7 +352,7 @@ QVector<XWing> XWing::findTechnics(const QSharedPointer<Sudoku> &sudoku, bool sk
 
                           if (type == XWingType::COLUMN)
                             wing.strType = "Column";
-                          else if (type == XWingType::ROW)
+                          else //(type == XWingType::ROW)
                             wing.strType = "Row";
 
                           wing.Z = target.candidate;
